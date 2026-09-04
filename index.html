@@ -511,7 +511,7 @@ footer a{color:var(--ink-2)}
       <div class="leagues-ctrl">
         <label class="sans">Leagues <b class="mono" id="rowCount"></b></label>
         <div class="chips" id="leagueChips" role="group" aria-label="Leagues to show"></div>
-        <p class="finder-note" style="margin:8px 0 0">The choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
+        <p class="finder-note" style="margin:8px 0 0">The live board opens on the leagues every operator prices, because only those carry a full consensus; "All leagues" widens it and the choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
       </div>
 
       <div class="pick" id="pick" aria-live="polite"></div>
@@ -946,12 +946,25 @@ footer a{color:var(--ink-2)}
   loadBoard(BOARD, BOOKS);
   var picked = null; // null = every league; otherwise a set of league names
   try { var saved = JSON.parse(localStorage.getItem('hbf.leagues') || 'null'); if (Array.isArray(saved) && saved.length) picked = saved; } catch (e) {}
-  function savePicked(){ try { picked ? localStorage.setItem('hbf.leagues', JSON.stringify(picked)) : localStorage.removeItem('hbf.leagues'); } catch (e) {} }
+  // "all" is saved explicitly, so a deliberate "All leagues" survives the next visit
+  // instead of being overwritten by the live board's default.
+  function savePicked(){ try { localStorage.setItem('hbf.leagues', JSON.stringify(picked ? picked : 'all')); } catch (e) {} }
   function leagueOn(name){ return !picked || picked.indexOf(name) >= 0; }
+  function fullLeagues(){ return LEAGUES.filter(function(l){ return l.books >= BOOKS.length; }).map(function(l){ return l.league; }); }
+  // A saved choice from another board (other league names) must not blank this one; and
+  // with nothing saved, the live board opens on the leagues every operator prices, since
+  // only those carry a full consensus.
+  function settlePick(fresh){
+    if (picked){ picked = picked.filter(function(n){ return LEAGUES.some(function(l){ return l.league === n; }); }); if (!picked.length) picked = null; }
+    if (!picked && fresh && !localStorage_has()){ var f = fullLeagues(); if (f.length && f.length < LEAGUES.length) picked = f; }
+  }
+  function localStorage_has(){ try { return !!localStorage.getItem('hbf.leagues'); } catch (e) { return false; } }
   var chipBox = document.getElementById('leagueChips');
   function renderChips(){
     var sports = []; LEAGUES.forEach(function(l){ if (sports.indexOf(l.sport) < 0) sports.push(l.sport); });
-    chipBox.innerHTML = '<button type="button" class="btn ghost sm" data-league="*" aria-pressed="' + (!picked) + '">All leagues</button>' +
+    var full = fullLeagues(); var isFull = picked && full.length === picked.length && full.every(function(n){ return picked.indexOf(n) >= 0; });
+    chipBox.innerHTML = '<button type="button" class="btn ghost sm" data-league="*" aria-pressed="' + (!picked) + '">All leagues (' + LEAGUES.length + ')</button>' +
+      '<button type="button" class="btn ghost sm" data-league="**" aria-pressed="' + (!!isFull) + '" title="Only these carry a consensus from every operator">Priced by all ' + BOOKS.length + ' (' + full.length + ')</button>' +
       sports.map(function(sp){
         return '<span class="sport-lbl">' + sp + '</span>' + LEAGUES.filter(function(l){ return l.sport === sp; }).map(function(l){
           return '<button type="button" class="btn ghost sm" data-league="' + l.league + '" aria-pressed="' + (picked ? leagueOn(l.league) : false) + '" title="' + l.fixtures + ' fixtures · priced by ' + l.books + ' of ' + BOOKS.length + ' books">' + l.league + ' <span class="cov">' + l.books + '/' + BOOKS.length + '</span></button>';
@@ -962,6 +975,7 @@ footer a{color:var(--ink-2)}
     var b = e.target.closest('button[data-league]'); if (!b) return;
     var name = b.dataset.league;
     if (name === '*') picked = null;
+    else if (name === '**'){ var f = fullLeagues(); picked = f.length && f.length < LEAGUES.length ? f : null; }
     else {
       picked = picked ? picked.slice() : [];
       var at = picked.indexOf(name);
@@ -1189,6 +1203,7 @@ footer a{color:var(--ink-2)}
     fetch('data/board.json', {cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(b){
       if (!b || !b.fixtures || !b.fixtures.length || !b.operators || b.operators.length < 2) return;
       LIVE = b; loadBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null;
+      settlePick(true);
       renderChips(); render(); renderAcca(); showLive(b);
     }).catch(function(){});
   } catch (e) {}
