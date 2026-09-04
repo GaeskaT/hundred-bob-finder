@@ -91,13 +91,15 @@ class PoliteClient:
 
     robots_note: dict[str, str] = {}
 
-    def get_json(self, url: str, timeout: int = 30):
+    def get_json(self, url: str, timeout: int = 30, min_interval: float = MIN_INTERVAL_S):
+        """`min_interval` lets an adapter pace one host slower than the default second
+        (Betika starts answering blank pages after a handful of one-second requests)."""
         if not self._allowed(url):
             host = urllib.parse.urlsplit(url).netloc
             raise PermissionError(f"{self.robots_note.get(host, 'robots.txt refused')} ({host}); "
                                   f"a host that refuses robots is not captured")
         host = urllib.parse.urlsplit(url).netloc
-        wait = MIN_INTERVAL_S - (time.monotonic() - self._last.get(host, 0))
+        wait = max(MIN_INTERVAL_S, min_interval) - (time.monotonic() - self._last.get(host, 0))
         if wait > 0:
             time.sleep(wait)
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,

@@ -30,15 +30,22 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
     for page in range(1, MAX_PAGES + 1):
         url = base.format(page=page)
         try:
-            data, text = client.get_json(url)
+            data, text = client.get_json(url, min_interval=2.5)
         except ValueError as e:
-            # A page still blank after the client's three attempts: the pages already
-            # read are good, so keep them and stop here rather than degrade the operator.
-            # A blank FIRST page is still reported as a fault.
-            if page > 1 and "''" in str(e):
+            if page == 1 or "''" not in str(e):
+                raise                      # a blank FIRST page is still a fault
+            # Blank after the client's three quick attempts: on 2026-09-04 this happened
+            # on page 5 or 6 every time, and the same page served normally a minute
+            # later, so it reads as rate limiting. Rest 45 s and try the page once more;
+            # only then keep what was read and stop.
+            print(f"Betika     page {page} blank; resting 45 s before one more try", flush=True)
+            import time as _t
+            _t.sleep(45)
+            try:
+                data, text = client.get_json(url, min_interval=2.5)
+            except ValueError:
                 print(f"Betika     page {page} stayed blank; keeping pages 1-{page - 1}", flush=True)
                 break
-            raise
         rows = data.get("data") or []
         if not rows:
             break
