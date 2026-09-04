@@ -37,6 +37,15 @@ jobs:
         id: capture
         continue-on-error: true       # a degraded capture still deploys, and says so on the page
         run: python -m capture.run
+      - name: fetch the board captured from Kenya, if any
+        continue-on-error: true
+        run: |
+          git fetch --depth=1 origin data:refs/remotes/origin/data 2>/dev/null || { echo "no data branch yet"; exit 0; }
+          mkdir -p kenya
+          git --work-tree=kenya checkout origin/data -- board.json status.json quarantine.json 2>/dev/null || echo "data branch has no board"
+          ls -la kenya || true
+      - name: choose the fresher, fuller board
+        run: python -m capture.choose kenya/board.json
       - name: assemble the site
         run: |
           mkdir -p site

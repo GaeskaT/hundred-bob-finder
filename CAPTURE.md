@@ -49,9 +49,23 @@ for a human to extend the alias table in `capture/match.py`.
 prices at each operator, or `null` where an operator does not price it. The page loads it when
 present and shows the capture time; otherwise it stays on the illustrative board and says so.
 
-## Schedule
+## Schedule, and the Kenyan machine
 
-`.github/workflows/capture.yml` runs every 30 minutes and commits `data/` when the board changed.
-The runners are outside Kenya; if an operator serves a different board or refuses by geography,
-the status file shows it and the capture can be run from a Kenyan machine instead
-(`python -m capture.run && git add data && git commit -m capture && git push`).
+`.github/workflows/capture.yml` runs every 30 minutes on GitHub's runners and deploys the page plus
+the board to Pages as an artifact; nothing is committed per capture. Measured on the first run
+(2026-09-04): Betika and Odibets answer the runners normally; **SportyBet refuses its robots file to
+the runner's address** while allowing it from Kenya, so from the cloud alone the board has two
+operators and no consensus.
+
+So there is a second path. On a Kenyan machine:
+
+```
+python -m capture.publish
+```
+
+runs the capture and force-pushes only `board.json`, `status.json` and `quarantine.json` as a single
+orphan commit to the `data` branch (history never grows). On its next run the workflow fetches that
+branch and `capture.choose` deploys the Kenyan board when it is fresher than 90 minutes and priced
+by more operators than the cloud capture; otherwise the cloud board stands. `status.json` records
+which was deployed and why, and the page's banner says it. Put `capture.publish` on a schedule
+(Task Scheduler, cron) every 30 minutes to keep three operators on the live page.

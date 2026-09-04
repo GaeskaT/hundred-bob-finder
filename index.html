@@ -1176,10 +1176,12 @@ footer a{color:var(--ink-2)}
     var st = document.getElementById('boardStatus'); if (!st) return;
     var ok = b.operators.length, bad = Object.keys(b.status || {}).filter(function(k){ return !b.status[k].ok; });
     st.hidden = false;
-    st.innerHTML = '<b>Live board</b> · captured ' + b.captured_at_eat + ' EAT from ' + b.operators.join(', ') +
+    var from = b.deployed_from === 'kenya' ? ' by a machine in Kenya' : (b.deployed_from === 'cloud' ? ' by the cloud runner' : '');
+    st.innerHTML = '<b>Live board</b> · captured ' + b.captured_at_eat + ' EAT' + from + ' from ' + b.operators.join(', ') +
       ' · ' + b.counts.fixtures + ' fixtures in the next ' + b.window_hours + ' hours, ' + b.counts.with_consensus + ' priced by all ' + ok +
-      (bad.length ? ' · <span style="color:var(--crit)">degraded: ' + bad.join(', ') + '</span>' : '') +
-      ' · <a href="data/observations.csv">observations.csv</a> · <a href="data/board.json">board.json</a> · raw responses archived in <a href="data/raw/">data/raw</a>';
+      (bad.length ? ' · <span style="color:var(--crit)">not captured this run: ' + bad.join(', ') + '</span>' : '') +
+      ' · <a href="data/board.json">board.json</a> · <a href="data/status.json">status</a>' +
+      (b.deployed_from === 'kenya' ? '' : ' · <a href="data/observations.csv">observations.csv</a> · raw responses in <a href="data/raw/">data/raw</a>');
     var note = document.getElementById('boardNote');
     if (note) note.innerHTML = 'These are the operators’ own public prices at the capture time above, read from their pre-match feeds with an identified user agent at one request per second, and archived. Probability is the median de-vigged view across the operators quoting the fixture; a fixture priced by fewer than three shows its probability in grey. Prices move: the operator’s app prices the bet live when you get there.';
   }

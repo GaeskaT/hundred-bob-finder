@@ -79,14 +79,23 @@ class PoliteClient:
                 else:
                     # 401/403 or a bot challenge: the host is refusing, so we do too.
                     self._robots[host] = None
-            except Exception:
+                    self.robots_note[host] = f"robots.txt answered HTTP {e.code}"
+            except Exception as e:
                 self._robots[host] = None
+                self.robots_note[host] = f"robots.txt unreachable: {type(e).__name__}"
         rp = self._robots[host]
-        return bool(rp) and rp.can_fetch(USER_AGENT, url)
+        ok = bool(rp) and rp.can_fetch(USER_AGENT, url)
+        if rp and not ok:
+            self.robots_note[host] = "robots.txt disallows this path for this user agent"
+        return ok
+
+    robots_note: dict[str, str] = {}
 
     def get_json(self, url: str, timeout: int = 30):
         if not self._allowed(url):
-            raise PermissionError(f"robots.txt does not allow this user agent at {url}")
+            host = urllib.parse.urlsplit(url).netloc
+            raise PermissionError(f"{self.robots_note.get(host, 'robots.txt refused')} ({host}); "
+                                  f"a host that refuses robots is not captured")
         host = urllib.parse.urlsplit(url).netloc
         wait = MIN_INTERVAL_S - (time.monotonic() - self._last.get(host, 0))
         if wait > 0:
