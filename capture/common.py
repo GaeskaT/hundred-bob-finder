@@ -102,13 +102,20 @@ class PoliteClient:
             time.sleep(wait)
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
                                                    "Accept": "application/json, text/plain, */*"})
-        with urllib.request.urlopen(req, timeout=timeout) as r:
-            body = r.read()
-        self._last[host] = time.monotonic()
-        text = body.decode("utf-8", "replace")
-        if text.lstrip()[:1] not in "{[":
-            raise ValueError(f"not JSON from {url}: {text[:80]!r}")
-        return json.loads(text), text
+        text = ""
+        for attempt in (1, 2):
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                body = r.read()
+            self._last[host] = time.monotonic()
+            text = body.decode("utf-8", "replace").strip()
+            if text and text[0] in "{[":
+                return json.loads(text), text
+            # An empty body was seen once from Betika on 2026-09-04 (an empty string
+            # passed the old "in" test). One retry after a pause; then the adapter is
+            # reported as degraded rather than guessed at.
+            if attempt == 1:
+                time.sleep(3)
+        raise ValueError(f"not JSON from {url}: {text[:80]!r}")
 
 
 def now_utc() -> datetime:
