@@ -29,7 +29,16 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
     out: list[Observation] = []
     for page in range(1, MAX_PAGES + 1):
         url = base.format(page=page)
-        data, text = client.get_json(url)
+        try:
+            data, text = client.get_json(url)
+        except ValueError as e:
+            # A page still blank after the client's three attempts: the pages already
+            # read are good, so keep them and stop here rather than degrade the operator.
+            # A blank FIRST page is still reported as a fault.
+            if page > 1 and "''" in str(e):
+                print(f"Betika     page {page} stayed blank; keeping pages 1-{page - 1}", flush=True)
+                break
+            raise
         rows = data.get("data") or []
         if not rows:
             break

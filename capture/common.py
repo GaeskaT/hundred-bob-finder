@@ -103,18 +103,18 @@ class PoliteClient:
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT,
                                                    "Accept": "application/json, text/plain, */*"})
         text = ""
-        for attempt in (1, 2):
+        for attempt, pause in ((1, 3), (2, 8), (3, 0)):
             with urllib.request.urlopen(req, timeout=timeout) as r:
                 body = r.read()
             self._last[host] = time.monotonic()
             text = body.decode("utf-8", "replace").strip()
             if text and text[0] in "{[":
                 return json.loads(text), text
-            # An empty body was seen once from Betika on 2026-09-04 (an empty string
-            # passed the old "in" test). One retry after a pause; then the adapter is
-            # reported as degraded rather than guessed at.
-            if attempt == 1:
-                time.sleep(3)
+            # Betika intermittently answers a page with an empty body (page 1 once,
+            # page 5 once on 2026-09-04) and serves the same page normally a minute
+            # later. Three attempts with a short backoff; then the caller decides.
+            if pause:
+                time.sleep(pause)
         raise ValueError(f"not JSON from {url}: {text[:80]!r}")
 
 
