@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="The Hundred Bob Finder - design and working prototype of a Kenyan odds-comparison app: consensus probability, best price, cash back to M-Pesa after both excise charges, hand-off to the operator. Illustrative prices only.">
+<style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>The Hundred Bob Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#F4F6F7; --surface:#FFFFFF; --surface-2:#EAEEF0;
+  --ink:#111B22; --ink-2:#4A5A63; --ink-3:#75868E;
+  --rule:#D6DEE2; --rule-strong:#B6C3C9;
+  --accent:#0F5E63; --accent-ink:#0A4249; --accent-soft:#DDEBEB;
+  --crit:#A4293A; --crit-soft:#F6E3E5;
+  --warn:#8A5A0B; --warn-soft:#F7EBD8;
+  --ok:#1F6B45; --ok-soft:#DFEEE6;
+  --s1:#4E9BA1; --s2:#1F757C; --s3:#0A4249;
+  --grid:#DDE4E7;
+  --phone:#1A2428; --phone-screen:#FFFFFF;
+  --shadow:0 1px 2px rgba(17,27,34,.05), 0 8px 24px -16px rgba(17,27,34,.22);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1518; --surface:#141D21; --surface-2:#1B262B;
+    --ink:#E6EDEF; --ink-2:#93A5AD; --ink-3:#6F828B;
+    --rule:#26343A; --rule-strong:#37484F;
+    --accent:#4FBFC4; --accent-ink:#8FD8DB; --accent-soft:#14312F;
+    --crit:#E8798A; --crit-soft:#2E1A1E;
+    --warn:#D6A24A; --warn-soft:#2B2214;
+    --ok:#58C48C; --ok-soft:#152A20;
+    --s1:#2E767E; --s2:#55B6BC; --s3:#B3EAEC;
+    --grid:#233036;
+    --phone:#050A0C; --phone-screen:#141D21;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1518; --surface:#141D21; --surface-2:#1B262B;
+  --ink:#E6EDEF; --ink-2:#93A5AD; --ink-3:#6F828B;
+  --rule:#26343A; --rule-strong:#37484F;
+  --accent:#4FBFC4; --accent-ink:#8FD8DB; --accent-soft:#14312F;
+  --crit:#E8798A; --crit-soft:#2E1A1E;
+  --warn:#D6A24A; --warn-soft:#2B2214;
+  --ok:#58C48C; --ok-soft:#152A20;
+  --s1:#2E767E; --s2:#55B6BC; --s3:#B3EAEC;
+  --grid:#233036;
+  --phone:#050A0C; --phone-screen:#141D21;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:"Newsreader",Georgia,"Times New Roman",serif;font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px 96px}
+.sans{font-family:"IBM Plex Sans",system-ui,sans-serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+/* masthead */
+.masthead{padding:56px 0 0}
+.eyebrow{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 18px}
+.eyebrow a{color:inherit}
+h1{font-family:"Newsreader",Georgia,serif;font-size:clamp(38px,6.2vw,66px);font-weight:500;line-height:1.02;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.standfirst{font-size:clamp(18px,2.2vw,21px);color:var(--ink-2);max-width:60ch;margin:20px 0 0;line-height:1.5}
+.docctl{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:40px 0 0;padding:0}
+.docctl div{flex:1 1 150px;padding:14px 20px 14px 0;border-right:1px solid var(--rule)}
+.docctl div:last-child{border-right:0}
+.docctl dt{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 5px}
+.docctl dd{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;font-weight:500;color:var(--ink);line-height:1.3}
+
+/* clauses */
+section{display:grid;grid-template-columns:80px minmax(0,1fr);gap:0 32px;padding:56px 0 0}
+.clause{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;font-weight:500;color:var(--ink-3);padding-top:10px;letter-spacing:.02em}
+.body{min-width:0}
+h2{font-family:"Newsreader",Georgia,serif;font-size:clamp(26px,3.4vw,34px);font-weight:500;letter-spacing:-.015em;line-height:1.14;margin:0 0 6px;text-wrap:balance}
+h3{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;font-weight:600;letter-spacing:-.005em;margin:32px 0 8px;color:var(--ink)}
+.deck{color:var(--ink-2);font-size:17px;margin:0 0 22px;max-width:66ch;font-style:italic}
+p{margin:0 0 16px;max-width:66ch}
+a{color:var(--accent);text-decoration-color:var(--rule-strong);text-underline-offset:3px}
+strong{font-weight:600}
+em.term{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--surface-2);padding:1px 3px;border-radius:3px}
+ul,ol{margin:0 0 16px;padding-left:20px;max-width:66ch}
+li{margin:0 0 7px}
+li::marker{color:var(--ink-3)}
+
+/* rule cards */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:8px 0 0}
+.rule{background:var(--surface);padding:20px}
+.rule h4{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;font-weight:600;margin:0 0 7px;color:var(--ink)}
+.rule p{font-size:15px;margin:0;color:var(--ink-2);line-height:1.5}
+
+/* callouts */
+.callout{border-left:3px solid var(--accent);background:var(--surface);padding:18px 22px;margin:24px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout p{margin:0;font-size:16px;color:var(--ink-2)}
+.callout p+p{margin-top:12px}
+.callout .lbl{display:block;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.callout.warn .lbl{color:var(--warn)}
+
+/* figure / diagram */
+figure{margin:8px 0 0}
+.figtitle{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px}
+.figsub{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12.5px;color:var(--ink-3);margin:0 0 16px;line-height:1.45}
+.diagbox{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);padding:18px 12px}
+svg.diag{display:block;width:100%;min-width:760px;height:auto;color:var(--ink)}
+figcaption{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12.5px;color:var(--ink-3);margin:14px 0 0;line-height:1.55;max-width:70ch}
+
+/* tables */
+.tablebox{overflow-x:auto;margin:8px 0 0;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px}
+th{text-align:left;font-weight:600;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);padding:12px 14px;border-bottom:1px solid var(--rule-strong);vertical-align:bottom}
+th.n{text-align:right}
+td{padding:12px 14px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-2);line-height:1.5}
+tr:last-child td{border-bottom:0}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap}
+td.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;color:var(--ink);text-align:right;white-space:nowrap}
+tbody tr:hover td{background:var(--surface-2)}
+
+/* finder panel */
+.panel{background:var(--surface);border:1px solid var(--rule);padding:22px 24px 24px;margin:8px 0 0;box-shadow:var(--shadow)}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px 28px;align-items:end;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 8px}
+.ctrl label b{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:22px;cursor:pointer;margin:0}
+select{width:100%;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule-strong);padding:7px 10px;border-radius:0}
+.seg{display:flex;border:1px solid var(--rule-strong)}
+.seg button{flex:1;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;font-weight:500;padding:7px 4px;background:var(--surface);color:var(--ink-2);border:0;border-right:1px solid var(--rule-strong);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.seg button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.leagues-ctrl{padding:16px 0 14px;border-bottom:1px solid var(--rule)}
+.leagues-ctrl>label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+.leagues-ctrl>label b{font-size:12.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px 6px;align-items:center}
+.sport-lbl{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 4px 0 10px}
+.sport-lbl:first-of-type{margin-left:14px}
+.chips .cov{font-family:"IBM Plex Mono",monospace;font-size:10.5px;opacity:.8;margin-left:3px}
+.finder{overflow-x:auto;margin:6px 0 0}
+table.ft{min-width:820px}
+table.ft td{padding:11px 12px}
+table.ft th{padding:12px 12px}
+.pill{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;padding:2px 7px;white-space:nowrap}
+.pill.ok{color:var(--ok);background:var(--ok-soft)}
+.pill.warn{color:var(--warn);background:var(--warn-soft)}
+.pill.crit{color:var(--crit);background:var(--crit-soft)}
+.pill.book{color:var(--accent-ink);background:var(--accent-soft)}
+.bar{display:inline-block;height:6px;background:var(--accent);vertical-align:middle;margin-right:8px}
+.bar-track{display:inline-block;width:70px;height:6px;background:var(--surface-2);vertical-align:middle;margin-right:8px;position:relative}
+.bar-track i{position:absolute;left:0;top:0;bottom:0;background:var(--accent)}
+td.neg{color:var(--crit)}
+td.pos{color:var(--ok)}
+.finder-note{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12.5px;color:var(--ink-3);margin:14px 0 0;line-height:1.5;max-width:none}
+.finder-note b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink)}
+
+/* charge chain */
+.chain{border-top:1px solid var(--rule)}
+.chain-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--rule)}
+.chain-row span:first-child{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;color:var(--ink-2);line-height:1.35}
+.chain-row .delta{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--crit);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chain-row .delta.up{color:var(--ok)}
+.chain-row .amt{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:74px;text-align:right}
+.chain-row.final{border-bottom:0;padding-top:14px}
+.chain-row.final span:first-child{font-size:14px;font-weight:600;color:var(--ink)}
+.chain-row.final .amt{font-size:28px;line-height:1}
+.detail-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:22px;padding-top:22px;border-top:1px solid var(--rule)}
+@media(max-width:720px){.detail-grid{grid-template-columns:1fr}}
+.detail-head{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+.detail-head b{color:var(--ink);letter-spacing:0;text-transform:none;font-size:15px;display:block;margin-top:3px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:6px 16px;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;color:var(--ink-2)}
+.kv b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right}
+
+/* slip (prototype) */
+.place{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:10px 16px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{padding:4px 9px;font-size:11.5px;font-weight:500}
+.btn.sm[aria-pressed="true"]{background:var(--accent);color:#fff}
+.legs{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 16px}
+.leg{background:var(--surface);display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:10px 14px;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px}
+.leg b{font-family:"IBM Plex Mono",monospace;font-weight:500;font-variant-numeric:tabular-nums;color:var(--ink)}
+.leg .rm{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12px;color:var(--crit);background:transparent;border:1px solid var(--rule-strong);padding:3px 8px;cursor:pointer}
+.leg.empty{color:var(--ink-3);display:block}
+.acca-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:720px){.acca-grid{grid-template-columns:1fr}}
+.books{width:100%;border-collapse:collapse;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px}
+.books th{padding:8px 10px;font-size:10.5px}
+.books td{padding:8px 10px}
+.books tr.best td{background:var(--accent-soft);color:var(--accent-ink)}
+.books td.n{font-family:"IBM Plex Mono",monospace}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.slip{margin-top:22px;border:1px solid var(--rule-strong);background:var(--surface-2);padding:18px 20px}
+.slip-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.slip-head b{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;font-weight:600}
+.slip-step{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--accent);font-weight:500}
+.slip .kv{background:var(--surface);padding:12px 14px;border:1px solid var(--rule)}
+.slip .kv .fee{color:var(--ink);font-weight:600}
+.moved{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--warn);background:var(--warn-soft);padding:9px 12px;margin:0 0 12px}
+.receipt{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;color:var(--ok);background:var(--ok-soft);padding:12px 14px;margin:12px 0 0;line-height:1.5}
+.receipt b{font-family:"IBM Plex Mono",monospace;font-weight:500}
+.slip-sentence{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--ink-2);margin:12px 0 0;line-height:1.5;max-width:none}
+
+/* phones */
+.phones{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin:8px 0 0}
+.phone{background:var(--phone);border-radius:28px;padding:12px;box-shadow:var(--shadow)}
+.screen{background:var(--phone-screen);border-radius:18px;min-height:470px;padding:16px 14px;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12.5px;color:var(--ink);display:flex;flex-direction:column;gap:10px}
+.sb{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3)}
+.scr-title{font-family:"Newsreader",Georgia,serif;font-size:20px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+.scr-sub{font-size:11px;color:var(--ink-3);margin-top:-6px}
+.row{border:1px solid var(--rule);padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:baseline}
+.row .f{font-weight:600;font-size:12.5px}
+.row .o{font-size:11px;color:var(--ink-2);grid-column:1}
+.row .big{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:500;color:var(--accent);grid-row:1/3;align-self:center}
+.row .sm{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3);grid-column:2;text-align:right}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:10.5px;font-weight:500;padding:3px 8px;border:1px solid var(--rule-strong);color:var(--ink-2)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.mini-chain{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:11.5px;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:8px}
+.mini-chain b{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink);text-align:right}
+.mini-chain .fin{font-weight:600;color:var(--ink);border-top:1px solid var(--rule);padding-top:6px}
+.mini-chain .fin+b{border-top:1px solid var(--rule);padding-top:6px;font-size:16px;color:var(--crit)}
+.cta{margin-top:auto;background:var(--accent);color:#fff;text-align:center;padding:10px;font-weight:600;font-size:12.5px}
+.cta.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.sheet{display:grid;grid-template-columns:1fr repeat(4,auto);gap:6px 8px;font-family:"IBM Plex Mono",monospace;font-size:11px;align-items:center}
+.sheet .h{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.sheet .best{color:var(--accent);font-weight:500;background:var(--accent-soft);padding:1px 4px}
+.sheet .name{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:11.5px;color:var(--ink)}
+.phone-cap{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:12.5px;color:var(--ink-3);margin:12px 4px 0;line-height:1.5}
+
+/* dims / phases / gates */
+.dims{display:flex;flex-direction:column;gap:14px;margin:8px 0 0}
+.dim{border:1px solid var(--rule);background:var(--surface);padding:22px 24px}
+.dim-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.dim-num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);font-weight:500}
+.dim-head h3{margin:0;font-size:17px;flex:1 1 auto}
+.dim dl{margin:0;display:grid;grid-template-columns:112px minmax(0,1fr);gap:9px 18px}
+@media(max-width:600px){.dim dl{grid-template-columns:1fr;gap:3px 0}.dim dd{margin-bottom:12px}}
+.dim dt{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.dim dd{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink-2);line-height:1.55}
+.dim dd b{color:var(--crit);font-weight:600}
+.phases{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:8px 0 0}
+.phase{background:var(--surface);padding:18px 22px;display:grid;grid-template-columns:130px minmax(0,1fr);gap:20px}
+@media(max-width:640px){.phase{grid-template-columns:1fr;gap:6px}}
+.phase .when{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent);font-weight:500;padding-top:2px}
+.phase h4{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14.5px;font-weight:600;margin:0 0 5px}
+.phase p{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;max-width:none}
+.gates{list-style:none;padding:0;margin:8px 0 0;max-width:none}
+.gates li{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--rule);margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14.5px;color:var(--ink-2);line-height:1.5}
+.gates li:last-child{border-bottom:0}
+.gates .mark{font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;color:var(--crit);background:var(--crit-soft);padding:3px 8px;white-space:nowrap;flex:0 0 auto;margin-top:1px}
+.gates .mark.ok{color:var(--ok);background:var(--ok-soft)}
+
+footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--rule);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--ink-3);line-height:1.65}
+footer h4{font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+footer ol{padding-left:18px;max-width:78ch}
+footer li{margin-bottom:6px}
+footer a{color:var(--ink-2)}
+
+@media(max-width:760px){
+  section{grid-template-columns:1fr;gap:0;padding-top:44px}
+  .clause{padding:0 0 6px}
+  .docctl div{flex:1 1 46%;border-right:0}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Product design · a bettor-facing companion to <em>The Hundred Bob Standard</em> (methodology draft, v0.1)</p>
+  <h1>The Hundred&nbsp;Bob Finder</h1>
+  <p class="standfirst">An app that reads every licensed operator's prices, works out how likely each outcome really is, finds where it is cheapest to back, tells you in shillings what comes back to M-Pesa if it wins, and opens that operator's own app or site with the slip ready. It never touches your money.</p>
+  <dl class="docctl">
+    <div><dt>Version</dt><dd>0.1 — design for review</dd></div>
+    <div><dt>Platform</dt><dd>Android first, then web</dd></div>
+    <div><dt>Market</dt><dd>Kenya, GRA-licensed operators</dd></div>
+    <div><dt>Data source</dt><dd>Public odds pages, captured</dd></div>
+    <div><dt>Placement</dt><dd>Hand-off to the operator's app or site</dd></div>
+    <div><dt>Money</dt><dd>None held, none moved, ever</dd></div>
+    <div><dt>Revenue rule</dt><dd>No operator money, no affiliate links</dd></div>
+  </dl>
+</header>
+
+<section>
+  <div class="clause">§ 1</div>
+  <div class="body">
+    <h2>What the app does, and what it refuses to promise</h2>
+    <p class="deck">The brief asks for the bets most likely to win and the real return after charges. Both are computable. The trap is pretending they point the same way.</p>
+    <p>Every operator publishes a price for every outcome, and every price hides two things: the operator's opinion of how likely the outcome is, and the operator's margin on top. Strip the margin and average across operators, and you have the best available estimate of the <strong>true probability</strong> of the outcome. Compare that to the <strong>best price</strong> any operator is offering, run the winnings through the deposit and withdrawal excise, and you have the <strong>net return</strong>. Those three numbers, side by side for every outcome on the board, are the product.</p>
+    <p>What the app cannot do is make a high-probability bet a high-return bet. A 90% favourite pays little because it is a 90% favourite. So the Finder never shows one ranking. It shows probability, net return and expected value on every row, lets the bettor sort by any of them, and marks the rare rows where the best price on the market is better than the odds the outcome deserves.</p>
+
+    <div class="rules">
+      <div class="rule"><h4>Probability comes from the market, not from us</h4><p>No prediction model, no tipster. The consensus of de-vigged prices across at least three operators is the estimate, and the number of operators behind it is printed beside it.</p></div>
+      <div class="rule"><h4>Returns are shown as cash to M-Pesa</h4><p>Not "odds 1.85". The figure is what lands back in the wallet after the 5% deposit excise, the operator's price, and the 5% withdrawal excise, for the amount the bettor actually typed.</p></div>
+      <div class="rule"><h4>Expected value is always visible</h4><p>Every row carries the EV of KES 100 sent. It is negative almost everywhere. The app says so rather than hiding it under a green button.</p></div>
+      <div class="rule"><h4>Same evidence standard as the scorecard</h4><p>Every odds observation carries source, timestamp, archive pointer and collector. The dataset the app runs on is the same open CSV the Hundred Bob Standard publishes.</p></div>
+    </div>
+
+    <div class="callout warn">
+      <span class="lbl">The claim the app must never make</span>
+      <p>"Bets that have the highest probability of winning" reads, to a bettor, as "bets that will win". The app can rank by probability honestly only if it prints, on the same screen, that a 78% outcome loses one time in four and that backing it at the best price on the market still returns less than was sent, on average. The design below puts that sentence on the detail screen of every bet. Remove it and the product becomes a tipster with better maths.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 2</div>
+  <div class="body">
+    <h2>The pipeline</h2>
+    <p class="deck">Seven stages between an operator's odds page and the row on the bettor's phone. Each is a separate service with its own table, so a failure in one is visible rather than silent.</p>
+    <figure>
+      <div class="diagbox">
+        <svg class="diag" viewBox="0 0 980 330" role="img" aria-label="Pipeline diagram: operator odds pages are captured by per-operator adapters into an archive and an odds-observation table; a matcher joins the same fixture across operators; the probability engine de-vigs each operator's prices and takes the consensus; the price engine picks the best price per outcome; the charges engine applies the excise chain to the bettor's stake; the ranker produces the rows the app shows.">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+          </defs>
+          <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="12" fill="currentColor">
+            <!-- operators -->
+            <g>
+              <rect x="20" y="30" width="130" height="34" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="85" y="52" text-anchor="middle">Operator A odds page</text>
+              <rect x="20" y="74" width="130" height="34" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="85" y="96" text-anchor="middle">Operator B odds page</text>
+              <rect x="20" y="118" width="130" height="34" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+              <text x="85" y="140" text-anchor="middle">… N operators</text>
+            </g>
+            <!-- capture -->
+            <rect x="210" y="30" width="140" height="122" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="280" y="56" text-anchor="middle" font-weight="600">Capture</text>
+            <text x="280" y="76" text-anchor="middle" font-size="11">one adapter per operator</text>
+            <text x="280" y="92" text-anchor="middle" font-size="11">headless browser, T−60</text>
+            <text x="280" y="108" text-anchor="middle" font-size="11">page archived at capture</text>
+            <text x="280" y="124" text-anchor="middle" font-size="11">rate-limited, public pages</text>
+            <line x1="150" y1="47" x2="208" y2="60" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <line x1="150" y1="91" x2="208" y2="91" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <line x1="150" y1="135" x2="208" y2="122" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <!-- archive -->
+            <rect x="210" y="190" width="140" height="44" fill="none" stroke="currentColor" stroke-width="1"/>
+            <text x="280" y="208" text-anchor="middle" font-size="11" font-weight="600">Archive</text>
+            <text x="280" y="224" text-anchor="middle" font-size="11">HTML + screenshot</text>
+            <line x1="280" y1="152" x2="280" y2="188" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="292" y="174" font-size="10.5" fill="currentColor" opacity=".7">stores</text>
+            <!-- observations -->
+            <rect x="410" y="30" width="140" height="122" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="480" y="56" text-anchor="middle" font-weight="600">Match</text>
+            <text x="480" y="76" text-anchor="middle" font-size="11">same fixture across</text>
+            <text x="480" y="92" text-anchor="middle" font-size="11">operators, by team</text>
+            <text x="480" y="108" text-anchor="middle" font-size="11">aliases + kick-off</text>
+            <text x="480" y="124" text-anchor="middle" font-size="11">unmatched → quarantine</text>
+            <line x1="350" y1="91" x2="408" y2="91" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="379" y="82" text-anchor="middle" font-size="10.5" opacity=".7">odds rows</text>
+            <!-- probability -->
+            <rect x="610" y="30" width="150" height="122" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+            <text x="685" y="56" text-anchor="middle" font-weight="600" fill="var(--accent-ink)">Probability</text>
+            <text x="685" y="76" text-anchor="middle" font-size="11">de-vig each operator</text>
+            <text x="685" y="92" text-anchor="middle" font-size="11">median across ≥3</text>
+            <text x="685" y="108" text-anchor="middle" font-size="11">longshot correction</text>
+            <text x="685" y="124" text-anchor="middle" font-size="11">n and spread kept</text>
+            <line x1="550" y1="91" x2="608" y2="91" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="579" y="82" text-anchor="middle" font-size="10.5" opacity=".7">markets</text>
+            <!-- price -->
+            <rect x="610" y="190" width="150" height="70" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="685" y="214" text-anchor="middle" font-weight="600">Best price</text>
+            <text x="685" y="232" text-anchor="middle" font-size="11">max odds per outcome</text>
+            <text x="685" y="248" text-anchor="middle" font-size="11">+ which operator</text>
+            <line x1="480" y1="152" x2="480" y2="225" stroke="currentColor" stroke-width="1"/>
+            <line x1="480" y1="225" x2="608" y2="225" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="544" y="216" text-anchor="middle" font-size="10.5" opacity=".7">same rows</text>
+            <!-- charges -->
+            <rect x="820" y="30" width="140" height="122" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="890" y="56" text-anchor="middle" font-weight="600">Charges</text>
+            <text x="890" y="76" text-anchor="middle" font-size="11">5% deposit excise</text>
+            <text x="890" y="92" text-anchor="middle" font-size="11">stake × best price</text>
+            <text x="890" y="108" text-anchor="middle" font-size="11">5% withdrawal excise</text>
+            <text x="890" y="124" text-anchor="middle" font-size="11">for the bettor's amount</text>
+            <line x1="760" y1="91" x2="818" y2="91" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="789" y="82" text-anchor="middle" font-size="10.5" opacity=".7">p, n</text>
+            <line x1="760" y1="225" x2="890" y2="225" stroke="currentColor" stroke-width="1"/>
+            <line x1="890" y1="225" x2="890" y2="154" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <text x="826" y="216" text-anchor="middle" font-size="10.5" opacity=".7">O, operator</text>
+            <!-- rank / app -->
+            <rect x="820" y="270" width="140" height="44" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="890" y="288" text-anchor="middle" font-weight="600">Rank → app rows</text>
+            <text x="890" y="304" text-anchor="middle" font-size="11">p · cash if wins · EV</text>
+            <line x1="890" y1="152" x2="890" y2="200" stroke="currentColor" stroke-width="1" opacity="0"/>
+            <line x1="960" y1="91" x2="975" y2="91" stroke="currentColor" stroke-width="1"/>
+            <line x1="975" y1="91" x2="975" y2="292" stroke="currentColor" stroke-width="1"/>
+            <line x1="975" y1="292" x2="962" y2="292" stroke="currentColor" stroke-width="1" marker-end="url(#arr)"/>
+            <!-- open data -->
+            <rect x="410" y="270" width="350" height="44" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="585" y="288" text-anchor="middle" font-size="11" font-weight="600">Open CSV (CC BY 4.0) — the same observations the Hundred Bob Standard publishes</text>
+            <text x="585" y="304" text-anchor="middle" font-size="11">every row: observed value, source, timestamp, archive pointer, collector</text>
+            <line x1="480" y1="152" x2="480" y2="268" stroke="currentColor" stroke-width="1" opacity=".35"/>
+          </g>
+        </svg>
+      </div>
+      <figcaption>The probability stage is the one that carries the product's claim, so it is the one drawn in the accent. Capture and Match are plumbing; Charges is arithmetic fixed by the Finance Act. Nothing downstream of Match ever sees an operator's page, only rows with an archive pointer.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 3</div>
+  <div class="body">
+    <h2>The probability engine</h2>
+    <p class="deck">"How likely is this to win" has a defensible answer that needs no model of football: the market's own opinion, with the margin removed.</p>
+    <p>An operator quoting 1.50 / 4.20 / 6.50 on a 1X2 market is saying the outcomes are worth 66.7%, 23.8% and 15.4%. Those sum to 105.9%, and the extra 5.9% is the margin. Dividing each by the total gives probabilities that sum to one: <strong>62.9%, 22.5%, 14.5%</strong>. That is the operator's de-vigged view. Do it for every operator quoting the fixture and take the median, and you have a consensus that no single operator's pricing error can drag around.</p>
+
+    <h3>Three refinements the first version ships with</h3>
+    <ol>
+      <li><strong>Longshot correction.</strong> Operators load margin unevenly: favourites are priced near fair, longshots far from it. Dividing by the total spreads the margin evenly and so <em>overstates</em> longshot probability. The engine uses the power method (raise each implied probability to a fitted exponent <em class="term">k</em> so they sum to one), which pushes margin onto the longshots where it actually sits. <em class="term">k</em> is fitted per operator per month from settled results, and published.</li>
+      <li><strong>Minimum three operators.</strong> A consensus of one is just that operator's margin-stripped price. Rows with fewer than three quoting operators show the probability in grey with the count, and never enter the "most likely" sort.</li>
+      <li><strong>Spread as a confidence signal.</strong> If the de-vigged views range from 58% to 71%, the operators disagree and the number is soft. The app shows the range on the detail screen, and the ranker penalises wide spreads so a soft 70% does not outrank a firm 66%.</li>
+    </ol>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Step</th><th>Formula</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Implied probability</td><td class="n">qᵢ = 1 ÷ Oᵢ</td><td>Oᵢ is the decimal price on outcome i at one operator.</td></tr>
+          <tr><td class="k">Margin on the market</td><td class="n">m = Σqᵢ − 1</td><td>The overround; the figure the Hundred Bob Standard scores.</td></tr>
+          <tr><td class="k">De-vig, basic</td><td class="n">pᵢ = qᵢ ÷ Σqⱼ</td><td>Even spread of margin. Used only where fewer than 200 settled results exist to fit k.</td></tr>
+          <tr><td class="k">De-vig, power</td><td class="n">pᵢ = qᵢᵏ, k solved so Σpᵢ = 1</td><td>k slightly above 1 moves margin onto longshots. Fitted per operator, published monthly.</td></tr>
+          <tr><td class="k">Consensus</td><td class="n">p = median over operators</td><td>Minimum three. n and the min–max spread are stored beside p.</td></tr>
+          <tr><td class="k">Fair odds</td><td class="n">O* = 1 ÷ p</td><td>The price the outcome deserves. Any operator quoting above O* is offering value on that outcome.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 4</div>
+  <div class="body">
+    <h2>The returns engine</h2>
+    <p class="deck">The Hundred Bob Standard measures what an average shilling is worth. The Finder answers the bettor's question: if I send this amount and this bet wins, what comes back?</p>
+    <p>A bettor sends <em class="term">D</em> shillings from M-Pesa. The Finance Act 2025 takes 5% on the way in, so the stake is <strong>0.95 D</strong>. If the bet wins at decimal price <em class="term">O</em>, the wallet holds <strong>0.95 D × O</strong>. Withdrawing takes another 5%, on winnings and the returned stake alike, so the cash back to M-Pesa is <strong>0.9025 D × O</strong>. Profit is that minus what was sent. The bet only pays if <em class="term">O</em> exceeds 1.108, and that is before the operator's margin has said anything.</p>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Quantity</th><th>Formula</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Stake placed</td><td class="n">S = 0.95 D</td><td>Deposit excise. Some operators also pass on an M-Pesa transfer fee; the app adds it when the operator's fee table is on file.</td></tr>
+          <tr><td class="k">Cash if it wins</td><td class="n">C = 0.95 × S × O = 0.9025 D O</td><td>Withdrawal excise applies to the whole wallet balance, not only the profit.</td></tr>
+          <tr><td class="k">Net profit if it wins</td><td class="n">C − D</td><td>Shown in shillings, red when negative — which happens on any price below 1.108.</td></tr>
+          <tr><td class="k">Break-even probability</td><td class="n">p* = 1 ÷ (0.9025 O)</td><td>The win rate needed just to get the deposit back over many bets. Compare to consensus p.</td></tr>
+          <tr><td class="k">Expected value per KES 100</td><td class="n">EV = 100 × (0.9025 p O − 1)</td><td>Negative on every row of a normal board. Positive only when the best price beats fair odds by more than 10.8%.</td></tr>
+          <tr><td class="k">Accumulator</td><td class="n">O = ΠOᵢ, p = Πpᵢ</td><td>Legs must be independent, so the app refuses two legs from one fixture. Margin compounds; the Standard's § 3 shows why.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="lbl">Why the "value" flag is rare and should stay rare</span>
+      <p>An outcome is flagged as value when the best price on the market is above its fair odds by enough to clear both excises, so the EV of a hundred bob is positive. On a board where every operator prices the same way, that never happens. It happens when one operator lags a team-news move, mis-keys a price, or runs a promotion that genuinely cuts margin. Those windows are short and operators close accounts that hit them repeatedly. The app should show the flag, show the EV, and say plainly that the price may be gone by the time the bet is placed.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 5</div>
+  <div class="body">
+    <h2>The bet finder, working</h2>
+    <p class="deck">The engines above, running on an illustrative board. Move the deposit and the sort; every figure recomputes from the raw prices in the table's own data.</p>
+    <div class="panel">
+      <div class="ctrls">
+        <div class="ctrl">
+          <label for="dep">Amount sent from M-Pesa <b id="depOut">KES 200</b></label>
+          <input type="range" id="dep" min="50" max="5000" step="50" value="200">
+        </div>
+        <div class="ctrl">
+          <label for="minp">Minimum probability <b id="minpOut">0%</b></label>
+          <input type="range" id="minp" min="0" max="90" step="5" value="0">
+        </div>
+        <div class="ctrl">
+          <label>Sort by</label>
+          <div class="seg" role="group" aria-label="Sort by">
+            <button type="button" data-sort="p" aria-pressed="true">Most likely</button>
+            <button type="button" data-sort="cash" aria-pressed="false">Cash if wins</button>
+            <button type="button" data-sort="ev" aria-pressed="false">Expected value</button>
+          </div>
+        </div>
+      </div>
+      <div class="leagues-ctrl">
+        <label class="sans">Leagues <b class="mono" id="rowCount"></b></label>
+        <div class="chips" id="leagueChips" role="group" aria-label="Leagues to show"></div>
+        <p class="finder-note" style="margin:8px 0 0">The choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
+      </div>
+
+      <div class="finder">
+        <table class="ft">
+          <thead>
+            <tr>
+              <th>Fixture · outcome</th>
+              <th>Probability</th>
+              <th class="n">Fair odds</th>
+              <th class="n">Best price</th>
+              <th>Where</th>
+              <th class="n">Cash if wins</th>
+              <th class="n">Profit</th>
+              <th class="n">EV / 100</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="finder-note">Prices are <b>illustrative</b> and the operators are unnamed on purpose: no real operator has been measured yet, and attaching invented prices to a real name is exactly the error the scorecard exists to avoid. Probability is the median de-vigged view across the four books; "n=4" means all four quoted the market. Tap a row to see its charge chain.</p>
+
+      <div class="detail-grid" id="detail">
+        <div>
+          <p class="detail-head">Selected bet <b id="dTitle">—</b></p>
+          <div class="kv" id="dKv"></div>
+        </div>
+        <div class="chain" role="group" aria-label="Charge chain for the selected bet">
+          <div class="chain-row"><span>Sent from M-Pesa</span><span class="delta"></span><span class="amt" id="c0">—</span></div>
+          <div class="chain-row"><span>After 5% deposit excise (the stake)</span><span class="delta" id="cd1"></span><span class="amt" id="c1">—</span></div>
+          <div class="chain-row"><span id="cLbl">If it wins at the best price</span><span class="delta up" id="cd2"></span><span class="amt" id="c2">—</span></div>
+          <div class="chain-row"><span>After 5% withdrawal excise</span><span class="delta" id="cd3"></span><span class="amt" id="c3">—</span></div>
+          <div class="chain-row final"><span>Cash back to M-Pesa<br><span style="font-weight:400;color:var(--ink-3);font-size:12.5px" id="cPct"></span></span><span class="delta"></span><span class="amt" id="cF">—</span></div>
+          <p class="finder-note" id="cNote"></p>
+          <div class="place">
+            <button type="button" class="btn" id="placeBtn">Take this to the operator</button>
+            <span class="finder-note" style="margin:0">Builds the § 9 hand-off card. Nothing leaves this page.</span>
+          </div>
+        </div>
+      </div>
+      <div class="slip" id="slip" hidden>
+        <div class="slip-head"><b id="slipTitle">Take this to the operator</b><span class="slip-step" id="slipStep">HAND-OFF CARD</span></div>
+        <div class="kv" id="slipKv"></div>
+        <p class="slip-sentence" id="slipSentence"></p>
+        <pre class="mono" id="slipText" style="margin:12px 0 0;padding:12px 14px;background:var(--surface);border:1px solid var(--rule);font-size:12.5px;white-space:pre-wrap;color:var(--ink)"></pre>
+        <div class="place">
+          <button type="button" class="btn" id="confirmBtn">Open the operator</button>
+          <button type="button" class="btn ghost" id="copyBtn">Copy slip</button>
+          <button type="button" class="btn ghost" id="cancelBtn">Close</button>
+        </div>
+        <p class="finder-note" id="receipt" hidden></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 6</div>
+  <div class="body">
+    <h2>Three screens</h2>
+    <p class="deck">Ninety-six per cent of Kenyan bettors play on a phone. The app is a list, a detail, and a price sheet; everything else is settings.</p>
+    <div class="phones">
+      <div>
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>09:41</span><span>KES 200 · 4 books</span></div>
+          <div class="scr-title">Most likely today</div>
+          <div class="scr-sub">Consensus of 4 operators, captured 08:40 · 2 of 4 leagues</div>
+          <div class="chip-row"><span class="chip on">Most likely</span><span class="chip">Cash if wins</span><span class="chip">Value</span></div>
+          <div class="chip-row"><span class="chip on">Kenyan PL 4/4</span><span class="chip on">EPL 4/4</span><span class="chip">UCL 4/4</span><span class="chip">NBA 3/4</span></div>
+          <div class="row"><span class="f">Home win · Fixture 1</span><span class="big">76%</span><span class="o">Best 1.29 at Book B</span><span class="sm">+KES 33 if wins</span></div>
+          <div class="row"><span class="f">Over 1.5 · Fixture 4</span><span class="big">74%</span><span class="o">Best 1.30 at Book D</span><span class="sm">+KES 35 if wins</span></div>
+          <div class="row"><span class="f">Home win · Fixture 3</span><span class="big">63%</span><span class="o">Best 1.52 at Book A</span><span class="sm">+KES 74 if wins</span></div>
+          <div class="row"><span class="f">Away win · Fixture 5</span><span class="big">47%</span><span class="o">Best 2.10 at Book C</span><span class="sm">+KES 179 if wins</span></div>
+          <div class="cta ghost">Every row: EV of KES 100 is negative</div>
+        </div></div>
+        <p class="phone-cap"><strong>Finder.</strong> The list opens on probability because that is what was asked for, with the profit-if-wins beside every row so the trade-off is visible without tapping. The second chip row is the league filter: grouped by sport, remembered on the phone, with the fraction of operators pricing each league, since a league only three of four books carry has a thinner consensus. The footer line is not removable in settings.</p>
+      </div>
+      <div>
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>09:41</span><span>‹ back</span></div>
+          <div class="scr-title">Home win · Fixture 3</div>
+          <div class="scr-sub">Consensus 63% (range 60–66, n=4) · fair odds 1.59</div>
+          <div class="row"><span class="f">Best price 1.52</span><span class="big">Book A</span><span class="o">Others: 1.48 · 1.50 · 1.45</span><span class="sm">below fair by 4%</span></div>
+          <div class="mini-chain">
+            <span>Sent from M-Pesa</span><b>200.00</b>
+            <span>Stake after 5% excise</span><b>190.00</b>
+            <span>If it wins at 1.52</span><b>288.80</b>
+            <span>After 5% withdrawal excise</span><b>274.36</b>
+            <span class="fin">Profit if it wins</span><b>+74.36</b>
+          </div>
+          <div class="mini-chain" style="border-top:0;padding-top:0">
+            <span>Needs to win</span><b>72.9% of the time</b>
+            <span>Wins about</span><b>63% of the time</b>
+            <span>EV of KES 100</span><b style="color:var(--crit)">−13.5</b>
+          </div>
+          <p style="margin:0;font-size:11px;color:var(--ink-2);line-height:1.45">A 63% outcome loses about one time in three. At this price it returns less than was sent, on average.</p>
+          <div class="cta">Open Book A with this slip</div>
+        </div></div>
+        <p class="phone-cap"><strong>Detail.</strong> The charge chain in shillings, then the two probabilities that decide the bet: what it needs and what it has. The sentence under them is the product's honesty in one line. The button opens Book A's own app or site with the slip prepared (§ 9); the bet, the money and the confirmation all happen there.</p>
+      </div>
+      <div>
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>09:41</span><span>‹ back</span></div>
+          <div class="scr-title">Price sheet</div>
+          <div class="scr-sub">Fixture 3 · 1X2 · captured 08:40</div>
+          <div class="sheet">
+            <span class="h">Outcome</span><span class="h">A</span><span class="h">B</span><span class="h">C</span><span class="h">D</span>
+            <span class="name">Home</span><span class="best">1.52</span><span>1.48</span><span>1.50</span><span>1.45</span>
+            <span class="name">Draw</span><span>4.10</span><span class="best">4.30</span><span>4.00</span><span>4.20</span>
+            <span class="name">Away</span><span>6.00</span><span>5.80</span><span class="best">6.50</span><span>6.20</span>
+            <span class="name">Margin</span><span>6.8%</span><span>7.7%</span><span>6.5%</span><span>8.9%</span>
+          </div>
+          <p style="margin:6px 0 0;font-size:11px;color:var(--ink-2);line-height:1.45">Book C is cheapest on this market. Book D charges a third more than Book C for the same three outcomes.</p>
+          <div class="mini-chain"><span>Hundred Bob value, single at Book C</span><b>84.4</b><span>Same bet at Book D</span><b>82.2</b></div>
+          <div class="cta ghost">See Book D's scorecard entry</div>
+        </div></div>
+        <p class="phone-cap"><strong>Price sheet.</strong> The same market at every operator, best price highlighted, margin on the last line. This is the screen that ties the app to the scorecard: the margin row is the Standard's D1 measurement, live.</p>
+      </div>
+      <div>
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>09:42</span><span>‹ back</span></div>
+          <div class="scr-title">Take this to Book A</div>
+          <div class="scr-sub">Home win · Fixture 3 · price seen 09:40</div>
+          <div class="row"><span class="f">Book A · 1X2 · Home</span><span class="big">1.52</span><span class="o">Book A prices it live when you get there</span><span class="sm">may have moved</span></div>
+          <div class="mini-chain">
+            <span>If you send</span><b>200.00</b>
+            <span>Stake after 5% excise, at Book A</span><b>190.00</b>
+            <span>Cash to M-Pesa if it wins at 1.52</span><b>274.36</b>
+            <span class="fin">Profit if it wins</span><b>+74.36</b>
+          </div>
+          <div class="mini-chain" style="border-top:0;padding-top:0">
+            <span>Needs to win</span><b>72.9%</b>
+            <span>Wins about</span><b>63%</b>
+            <span>EV of KES 100</span><b style="color:var(--crit)">−13.5</b>
+          </div>
+          <p style="margin:0;font-size:11px;color:var(--ink-2);line-height:1.45">A 63% outcome loses about one time in three. Nothing is placed until you confirm and pay inside Book A. The Finder never sees your money.</p>
+          <div class="cta">Open Book A</div>
+          <div class="cta ghost" style="margin-top:6px">Copy slip</div>
+        </div></div>
+        <p class="phone-cap"><strong>Hand-off.</strong> The slip the bettor is about to carry across: operator, market, outcome, the price seen and when, the chain for the amount they typed, and the sentence. "Open Book A" is a plain link into the operator's app or site, at the event where the operator supports it; "Copy slip" is the fallback for operators that do not.</p>
+      </div>
+      <div>
+        <div class="phone"><div class="screen">
+          <div class="sb"><span>09:47</span><span>‹ back</span></div>
+          <div class="scr-title">Accumulator · 3 legs</div>
+          <div class="scr-sub">Best combined price at Book C · all legs must win</div>
+          <div class="row"><span class="f">Home win · Fixture 3</span><span class="big">1.50</span><span class="o">wins about 63%</span><span class="sm">remove</span></div>
+          <div class="row"><span class="f">Over 1.5 · Fixture 4</span><span class="big">1.29</span><span class="o">wins about 74%</span><span class="sm">remove</span></div>
+          <div class="row"><span class="f">Away win · Fixture 5</span><span class="big">2.10</span><span class="o">wins about 47%</span><span class="sm">remove</span></div>
+          <div class="mini-chain">
+            <span>All three win about</span><b>21% · once in 5</b>
+            <span>Fair combined odds</span><b>4.70</b>
+            <span>Combined · C · A · B · D</span><b>4.06 · 3.99 · 3.80 · 3.77</b>
+            <span>Margin on the slip</span><b style="color:var(--crit)">13.5%</b>
+            <span class="fin">Cash if all win, KES 200 sent</span><b>733.46</b>
+          </div>
+          <p style="margin:0;font-size:11px;color:var(--ink-2);line-height:1.45">Three legs at about 4.8% margin each become 13.5% on the whole slip. Adding a fourth leg raises it again.</p>
+          <div class="cta">Open Book C with all 3 legs · 4.06</div>
+        </div></div>
+        <p class="phone-cap"><strong>Builder.</strong> Legs with their probability, the combined price at every operator with the best one in the button, and the margin on the slip beside the margin per leg. The figures are what the prototype computes for the same three legs. The button names the operator whose product is highest, which need not be the one with the best price on every leg: here Book A is best on the first leg and Book D on the second, and Book C still wins the slip.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 7</div>
+  <div class="body">
+    <h2>Capturing the prices</h2>
+    <p class="deck">The scraping is the least interesting and most fragile part. Design it to fail loudly and to leave evidence.</p>
+    <div class="dims">
+      <div class="dim">
+        <div class="dim-head"><span class="dim-num">C1</span><h3>One adapter per operator</h3></div>
+        <dl>
+          <dt>Does</dt><dd>Loads the public pre-match pages in a headless browser, extracts fixture, market, outcome and price, and writes one observation row per price with the five evidence fields. Also saves the rendered HTML and a screenshot to the archive, keyed by the observation id.</dd>
+          <dt>Cadence</dt><dd>Every fixture at T−60 minutes for the scorecard's basket, plus every 15 minutes for the day's board so the app is never more than a quarter-hour stale. The capture time is printed on every screen.</dd>
+          <dt>Fails how</dt><dd><b>Loudly.</b> An adapter that returns fewer than 80% of yesterday's fixture count, or any market whose prices do not sum to more than 1, is marked degraded and its rows are excluded from consensus until a human looks.</dd>
+        </dl>
+      </div>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-num">C2</span><h3>Matching the same fixture across operators</h3></div>
+        <dl>
+          <dt>Does</dt><dd>Normalises team names through an alias table ("Gor Mahia", "Gor Mahia FC", "GOR MAHIA"), then joins on competition, both teams and a kick-off within 30 minutes. A match is only accepted when both teams and the kick-off agree.</dd>
+          <dt>Fails how</dt><dd><b>Into quarantine.</b> Anything that matches on one team only, or on the name but a different kick-off, goes to a review queue. A wrong match would blend two different games into one probability, which is the worst silent error the system can make.</dd>
+        </dl>
+      </div>
+      <div class="dim">
+        <div class="dim-head"><span class="dim-num">C3</span><h3>Conduct</h3></div>
+        <dl>
+          <dt>Rules</dt><dd>Public pages only; never a logged-in session, never a bettor's credentials. One request every few seconds per operator, identified by a named user agent with a contact address. Honour robots exclusions and stop on request while the dispute is worked out. Capture prices, never copy editorial content.</dd>
+          <dt>Legal read</dt><dd>Odds are facts about a public offer and reproducing them for comparison is the same act every odds-comparison site performs. The exposure is in the operator terms of use, not in copyright; a Kenyan advocate should read the terms of every operator before its adapter goes live, and the finding is recorded beside the adapter.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <h3>Data model</h3>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Table</th><th>Key fields</th><th>Written by</th></tr></thead>
+        <tbody>
+          <tr><td class="k">operators</td><td>id, name, licence number, fee table, adapter status, k (power exponent) by month</td><td>Ops, monthly</td></tr>
+          <tr><td class="k">fixtures</td><td>id, competition, home, away, kick-off, alias matches, quarantine flag</td><td>Match</td></tr>
+          <tr><td class="k">odds_observations</td><td>id, fixture, market, outcome, operator, price, observed_at, archive_uri, collector</td><td>Capture — append-only, never edited</td></tr>
+          <tr><td class="k">fair_probabilities</td><td>fixture, market, outcome, p, n, min, max, method, computed_at</td><td>Probability</td></tr>
+          <tr><td class="k">recommendations</td><td>outcome, best_price, operator, cash_for_100, ev_for_100, value flag, as_of</td><td>Rank — rebuilt every capture cycle</td></tr>
+          <tr><td class="k">results</td><td>fixture, market, winning outcome, settled_at</td><td>Results feed; feeds the k fit and the app's own scoreboard</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 8</div>
+  <div class="body">
+    <h2>What the app is accountable for</h2>
+    <p class="deck">A product that tells people how likely things are must publish how often it was right.</p>
+    <ul class="gates">
+      <li><span class="mark ok">PUBLISHED</span><span><strong>Calibration, monthly.</strong> Of the outcomes the app called 70–80% likely, how many won? A calibration table by decile, on a public page, with n. If the 70–80% bucket wins 63% of the time, the probability engine is wrong and the page says so.</span></li>
+      <li><span class="mark ok">PUBLISHED</span><span><strong>Realised return.</strong> If a bettor had sent KES 100 on every row the app ranked first each day, what would have come back? Printed as a running figure on the home screen. It will be below 100. That is the point.</span></li>
+      <li><span class="mark">NEVER</span><span>No affiliate links, no revenue share, no tracked referral codes, no "sponsored" rows. The "Open Book A" button is a plain link that earns nothing. The moment the app earns from where a bettor is sent, its ranking is an advertisement.</span></li>
+      <li><span class="mark">NEVER</span><span>No money in, no money out, no winnings held, no operator account connected, no bettor password anywhere. The app knows what the operators are charging; it never knows what the bettor has.</span></li>
+      <li><span class="mark">NEVER</span><span>No push notifications for "hot" bets, no streaks, no confetti on a win. The app is consulted, it does not summon.</span></li>
+      <li><span class="mark">GATE</span><span>Self-exclusion check on first run: a bettor who reports being on any operator's exclusion list is shown the calibration page and the realised-return figure, and nothing else.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 9</div>
+  <div class="body">
+    <h2>Hand-off to the operator</h2>
+    <p class="deck">The app finds the bet. The operator takes it. Between the two, nothing crosses but a slip the bettor can read.</p>
+    <p>This is a deliberate boundary, not a missing feature. An app that accepts deposits is a payment business under the National Payment System Act; one that transmits bets may be an intermediary under the Gambling Control Act 2025; one that holds winnings is both. Each of those brings a licence, a regulator, a compliance function and a class of dispute the product does not need. By handing off, the Finder stays what it is: a measurement tool that tells a bettor where a price is good and what it is worth after the charges. The bet, the money and the account are the operator's, exactly as they are today.</p>
+
+    <figure>
+      <div class="diagbox">
+        <svg class="diag" viewBox="0 0 980 250" role="img" aria-label="Hand-off diagram: the Finder opens the operator's app or site with the slip prepared; the bettor confirms and pays there, M-Pesa to the operator, with the excise taken by the operator; results come back to the Finder only through the public results feed. No money, credential or account token crosses between the Finder and the operator.">
+          <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+          <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="12" fill="currentColor">
+            <rect x="20" y="60" width="200" height="120" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+            <text x="120" y="86" text-anchor="middle" font-weight="600" fill="var(--accent-ink)">The Finder</text>
+            <text x="120" y="106" text-anchor="middle" font-size="11">probability · best price</text>
+            <text x="120" y="122" text-anchor="middle" font-size="11">cash after charges · EV</text>
+            <text x="120" y="138" text-anchor="middle" font-size="11">the slip, prepared</text>
+            <text x="120" y="164" text-anchor="middle" font-size="11" opacity=".75">holds nothing of the bettor's</text>
+
+            <rect x="390" y="60" width="200" height="120" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <text x="490" y="86" text-anchor="middle" font-weight="600">Operator app or site</text>
+            <text x="490" y="106" text-anchor="middle" font-size="11">prices the slip live</text>
+            <text x="490" y="122" text-anchor="middle" font-size="11">bettor confirms and pays</text>
+            <text x="490" y="138" text-anchor="middle" font-size="11">takes both excise charges</text>
+            <text x="490" y="164" text-anchor="middle" font-size="11" opacity=".75">account, KYC, limits, payout</text>
+
+            <rect x="760" y="60" width="200" height="120" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+            <text x="860" y="86" text-anchor="middle" font-weight="600">Bettor's M-Pesa</text>
+            <text x="860" y="106" text-anchor="middle" font-size="11">deposit to the operator</text>
+            <text x="860" y="122" text-anchor="middle" font-size="11">withdrawal from the operator</text>
+            <text x="860" y="164" text-anchor="middle" font-size="11" opacity=".75">never to or from the Finder</text>
+
+            <line x1="220" y1="100" x2="388" y2="100" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr2)"/>
+            <text x="304" y="91" text-anchor="middle" font-size="10.5" opacity=".75">opens with the slip</text>
+            <line x1="590" y1="120" x2="758" y2="120" stroke="currentColor" marker-end="url(#arr2)"/>
+            <line x1="758" y1="140" x2="592" y2="140" stroke="currentColor" marker-end="url(#arr2)"/>
+            <text x="674" y="111" text-anchor="middle" font-size="10.5" opacity=".75">stake</text>
+            <text x="674" y="156" text-anchor="middle" font-size="10.5" opacity=".75">winnings</text>
+
+            <line x1="490" y1="180" x2="490" y2="212" stroke="currentColor" stroke-width="1" opacity=".5"/>
+            <line x1="490" y1="212" x2="122" y2="212" stroke="currentColor" stroke-width="1" opacity=".5"/>
+            <line x1="122" y1="212" x2="122" y2="182" stroke="currentColor" stroke-width="1" opacity=".5" marker-end="url(#arr2)"/>
+            <text x="306" y="228" text-anchor="middle" font-size="10.5" opacity=".75">results, via the public results feed only — nothing about this bettor</text>
+
+            <text x="304" y="128" text-anchor="middle" font-size="10.5" fill="var(--crit)">no money · no login · no token</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>One arrow leaves the Finder and it carries a slip. Everything with money on it runs between the bettor and the operator on the operator's own rails, where the excise is charged and the account lives. The only thing that comes back is the public result of the match.</figcaption>
+    </figure>
+
+    <h3>§ 9.1 — What the slip carries</h3>
+    <p>Operator, fixture, market, outcome, the price the Finder saw and the minute it saw it, the amount the bettor typed, and the charge chain for that amount. The app opens the operator in whichever of three ways the operator allows, best first:</p>
+    <ol>
+      <li><strong>A link to the event with the selection marked</strong>, where the operator's app or site accepts one. The bettor lands on the right market with the outcome highlighted, types the stake, and confirms at the operator's live price.</li>
+      <li><strong>A link to the event page</strong>, where only that is supported. The slip card stays on the bettor's screen as a notification so the selection can be read while the operator's page is open.</li>
+      <li><strong>Copy the slip and open the site</strong>, for operators with no deep links at all. The card is plain text: "Book A · Fixture 3 · 1X2 · Home · seen 1.52 at 09:40".</li>
+    </ol>
+    <p>Which of the three an operator gets is recorded in its adapter and shown on the price sheet, because a two-tap hand-off and a copy-and-find hand-off are different products to a bettor on a bus.</p>
+
+    <h3>§ 9.2 — What the app keeps about the bettor</h3>
+    <p>Nothing that it does not need for the calibration table. The app does not know whether the bettor placed the bet, for how much, or what came back. Optionally, and off by default, a bettor can mark a slip "I placed this" after the hand-off, and the app then pairs it with the public result to show a personal realised-return figure. That record lives on the phone only, is never uploaded, and clears with the app. It exists because "what has this actually returned me" is the most useful number in the product, and the bettor is the only one who can supply half of it.</p>
+
+    <h3>§ 9.3 — Guardrails that survive the boundary</h3>
+    <ul class="gates">
+      <li><span class="mark ok">ALWAYS</span><span><strong>The sentence travels with the slip.</strong> "A 63% outcome loses about one time in three" is on the hand-off card, above the button, in the same words as the detail screen.</span></li>
+      <li><span class="mark ok">ALWAYS</span><span><strong>The price is labelled as seen, with the time.</strong> The operator prices the bet live; the Finder's figure is up to fifteen minutes old and the card says so, so a moved price is not a surprise.</span></li>
+      <li><span class="mark ok">DEFAULT ON</span><span><strong>Realised return first.</strong> A bettor who has turned on the personal record sees their running figure at the top of the hand-off card before the button. Off by default because the record is.</span></li>
+      <li><span class="mark">HONEST</span><span><strong>No caps, no loss pauses.</strong> The app cannot enforce a spending limit on money it never sees. Limits and self-exclusion are the operator's and the regulator's; the app links to each operator's limit-setting page from its price sheet and to the national self-exclusion route from settings, and does not pretend to more.</span></li>
+      <li><span class="mark">NEVER</span><span>No push notifications, no "price is moving" alerts, no re-open prompts. The app is consulted. A bettor who wants an alert on a value price asks for it in § 11's alerts phase and gets one that states the EV.</span></li>
+      <li><span class="mark">GATE</span><span><strong>Advertising-rules read.</strong> An app that sends bettors to operators, even unpaid, sits near the Gambling Control Act's advertising provisions. A Kenyan advocate confirms before launch that a comparison tool with no operator money is outside them, and that reading is published beside the independence covenant.</span></li>
+    </ul>
+
+    <h3>§ 9.4 — The hand-off, in the prototype</h3>
+    <p>"Take this to the operator" under the charge chain in § 5 builds the card for the selected row; the accumulator builder in § 10 does the same for a slip of several legs. The buttons are inert here, since there is no operator to open, but the card is exactly what the phone would carry across.</p>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 10</div>
+  <div class="body">
+    <h2>The accumulator builder</h2>
+    <p class="deck">Multibets are where Kenyan bettors put their money and where the margin does its damage. The builder exists so that a bettor who is going to build one anyway sees the compounding happen, leg by leg, before carrying the slip to the operator.</p>
+    <p>An accumulator differs from a handful of singles in three ways the design has to respect. Every leg must be placed at the <strong>same operator</strong>, so the best price is the best <em>combined</em> price across books, not the best price per leg. The probability that it pays is the <strong>product</strong> of the legs' probabilities, and the operator's margin compounds the same way. And the legs must be <strong>independent</strong>: two outcomes from one fixture are not a bet, they are a contradiction or a certainty, and the builder refuses them.</p>
+
+    <h3>§ 10.1 — Rules the builder enforces</h3>
+    <ul class="gates">
+      <li><span class="mark ok">ALWAYS</span><span><strong>One outcome per fixture.</strong> Adding a second leg from a fixture already in the slip is refused with the reason shown.</span></li>
+      <li><span class="mark ok">ALWAYS</span><span><strong>Priced per book, best book chosen.</strong> The builder multiplies each operator's prices for the chosen legs and picks the operator with the highest product. An operator missing any leg is excluded. The table of all four is shown, so the bettor sees how far apart they are.</span></li>
+      <li><span class="mark ok">ALWAYS</span><span><strong>Compounding shown after each leg.</strong> Probability of all legs winning, fair combined odds, the margin on the whole slip beside the average margin per leg, and the EV of KES 100. The margin figure grows with every leg; the builder lets it be watched.</span></li>
+      <li><span class="mark ok">ALWAYS</span><span><strong>The sentence.</strong> "All five legs must win. That happens about once in 12 tries." Placed above the button, in the same words on the phone and in the prototype.</span></li>
+      <li><span class="mark">LIMIT</span><span><strong>Eight legs.</strong> Beyond that, at any realistic per-leg margin, the operator keeps most of the stake in expectation, and the app should not be the tool that builds it.</span></li>
+      <li><span class="mark">NEVER</span><span>No suggested accumulators, no "popular combos", no "boost" banners, no cash-out. The app builds what the bettor chooses and prices it honestly. The Standard's D1 measures whether "odds boosts" cut margin or merely move it; the builder does not carry them.</span></li>
+    </ul>
+
+    <h3>§ 10.2 — How the hand-off handles it</h3>
+    <p>The § 9 hand-off carries every leg for the chosen operator, in that operator's own market names, with the combined price the Finder saw and the time. The operator's app prices all the legs live; if one has moved, the bettor sees the new combined price there before confirming, and the Finder's card is still on screen to compare against. The app shows the compounded margin before the hand-off precisely because the operator's slip will not.</p>
+
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Quantity</th><th>Formula</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Combined price at book b</td><td class="n">O_b = Π Oᵢ,b over legs</td><td>Each leg at the same operator. Best book is max over b.</td></tr>
+          <tr><td class="k">Probability all legs win</td><td class="n">p = Π pᵢ</td><td>Consensus probabilities from § 3, multiplied; valid only for independent legs.</td></tr>
+          <tr><td class="k">Fair combined odds</td><td class="n">O* = 1 ÷ p</td><td>What the slip deserves.</td></tr>
+          <tr><td class="k">Margin on the slip</td><td class="n">M = 1 − O_b ÷ O*</td><td>Equals 1 − Π(1 − mᵢ) when each leg carries margin mᵢ: the Standard's compounding formula.</td></tr>
+          <tr><td class="k">Cash if all win</td><td class="n">0.9025 D × O_b</td><td>Same excise chain as a single; the wallet pays D and receives this.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>§ 10.3 — The builder, in the prototype</h3>
+    <div class="panel" id="accaPanel">
+      <div id="accaLegs" class="legs"></div>
+      <div class="acca-grid">
+        <div>
+          <p class="detail-head">Priced at every book</p>
+          <div id="accaBooks"></div>
+        </div>
+        <div>
+          <p class="detail-head">The slip so far</p>
+          <div class="kv" id="accaKv"></div>
+        </div>
+      </div>
+      <p class="slip-sentence" id="accaNote"></p>
+      <div class="place"><button type="button" class="btn" id="accaPlace" disabled>Take this to the operator</button><span class="finder-note" style="margin:0">Builds the § 9 hand-off card with every leg on it.</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="clause">§ 11</div>
+  <div class="body">
+    <h2>Build sequence</h2>
+    <p class="deck">The scorecard's Phase 1 margin tracker is the Finder's Phase 0. Build the capture once and let both products run on it.</p>
+    <div class="phases">
+      <div class="phase"><div class="when">Phase 0</div><div><h4>Capture and open data</h4><p>Adapters for four operators, the alias table, the archive, and the CSV publish. No app yet. Two weeks of clean observations before anything is computed on them.</p></div></div>
+      <div class="phase"><div class="when">Phase 1</div><div><h4>Probability and returns, as a web table</h4><p>The § 5 finder on live data, on a plain web page, with the basic de-vig. Start collecting settled results the same day so the power exponent can be fitted by the end of the phase.</p></div></div>
+      <div class="phase"><div class="when">Phase 2</div><div><h4>The Android app, with hand-off</h4><p>The three screens of § 6, English and Kiswahili, and the § 9 hand-off: event links with the selection marked where operators support them, event links or copied slips elsewhere. Calibration page goes live with the first month of results.</p></div></div>
+      <div class="phase"><div class="when">Phase 3</div><div><h4>The accumulator builder</h4><p>§ 10 as a display and a hand-off: per-book combined prices, compounding shown leg by leg, the slip carried across with every leg. Ships once the calibration table has held for one month, since a multibet's probability is only as good as its legs'.</p></div></div>
+      <div class="phase"><div class="when">Phase 4</div><div><h4>Alerts, opt-in, EV stated</h4><p>A bettor may ask to be told when a chosen outcome's best price rises above fair odds. The alert states the EV and the likely lifetime of the price. No other notification exists.</p></div></div>
+      <div class="phase"><div class="when">Standing</div><div><h4>One dataset, two products</h4><p>The Finder shows a bettor today's prices; the Standard shows the public each operator's price over a year. Same observations, same evidence fields, same refusal of operator money.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h4>Basis and caveats</h4>
+  <ol>
+    <li>Excise rates, participation figures, the evidence standard and the independence covenant are inherited from <em>The Hundred Bob Standard</em>, v0.1 (methodology draft), and its sources. Verify the 5% deposit and withdrawal excise against the current Finance Act before shipping any figure.</li>
+    <li>The power method of de-vigging and the favourite–longshot evidence follow the overround literature cited in the Standard, § 3.2.</li>
+    <li>All prices in § 5 and § 6 are invented to demonstrate the arithmetic. No operator has been measured. Book A–D are not any real operator.</li>
+    <li>This is a design document, not legal advice; operator terms of use, the Gambling Control Act 2025 and its advertising provisions should be read by a Kenyan advocate before the first adapter runs. The app holds no money and places no bets by design, so the National Payment System Act does not apply to it.</li>
+  </ol>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  // Illustrative board: four unnamed books quoting 1X2 and one totals market.
+  // Every figure on the page is computed from these raw prices.
+  var BOOKS = ["Book A","Book B","Book C","Book D"];
+  // Each fixture carries its sport and league; a null price means that book does not price the market.
+  var BOARD = [
+    {fx:"Fixture 1 · Sat 16:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.27,5.20,9.50],[1.29,5.00,9.00],[1.26,5.30,10.0],[1.25,5.10,9.20]]},
+    {fx:"Fixture 2 · Sat 18:00", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[2.40,3.30,2.95],[2.45,3.25,2.90],[2.35,3.40,3.00],[2.38,3.20,2.98]]},
+    {fx:"Fixture 3 · Sun 15:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.52,4.10,6.00],[1.48,4.30,5.80],[1.50,4.00,6.50],[1.45,4.20,6.20]]},
+    {fx:"Fixture 4 · Sun 15:00", sport:"Football", league:"UEFA Champions League", mk:"Over/Under 1.5", out:["Over 1.5","Under 1.5"], odds:[[1.28,3.60],[1.27,3.70],[1.29,3.50],[1.30,3.45]]},
+    {fx:"Fixture 5 · Sun 17:30", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[3.60,3.50,2.05],[3.40,3.60,2.02],[3.50,3.40,2.10],[3.75,3.45,2.00]]},
+    {fx:"Fixture 6 · Sun 20:00", sport:"Football", league:"UEFA Champions League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.95,3.60,3.80],[1.90,3.70,3.90],[2.30,3.40,3.60],[1.92,3.65,3.85]]},
+    {fx:"Fixture 7 · Sun 22:00", sport:"Basketball", league:"NBA", mk:"Moneyline", out:["Home win","Away win"], odds:[[1.65,2.25],[1.62,2.30],null,[1.60,2.35]]}
+  ];
+  var EXC = 0.95; // deposit and withdrawal excise each leave 95%
+  function median(a){ a = a.slice().sort(function(x,y){return x-y}); var m = a.length>>1; return a.length%2 ? a[m] : (a[m-1]+a[m])/2; }
+  // Build rows: consensus p per outcome from basic de-vig at each book.
+  var ROWS = [];
+  BOARD.forEach(function(g){
+    var quoting = g.odds.map(function(bk, b){ return bk ? b : -1; }).filter(function(b){ return b >= 0; });
+    var devig = {};
+    quoting.forEach(function(b){ var q = g.odds[b].map(function(o){return 1/o}); var s = q.reduce(function(a,c){return a+c},0); devig[b] = q.map(function(x){return x/s}); });
+    g.out.forEach(function(name, i){
+      var ps = quoting.map(function(b){ return devig[b][i]; });
+      var best = -1, where = 0;
+      quoting.forEach(function(b){ if (g.odds[b][i] > best){ best = g.odds[b][i]; where = b; } });
+      ROWS.push({fx:g.fx, sport:g.sport, league:g.league, mk:g.mk, out:name, p:median(ps), pmin:Math.min.apply(null,ps), pmax:Math.max.apply(null,ps), n:ps.length,
+                 best:best, where:BOOKS[where], all:g.odds.map(function(bk){ return bk ? bk[i] : null; })});
+    });
+  });
+  // Leagues on the board, with how many books price each (what the consensus can lean on).
+  var LEAGUES = [];
+  BOARD.forEach(function(g){
+    var L = LEAGUES.filter(function(l){ return l.league === g.league; })[0];
+    if (!L){ L = {sport:g.sport, league:g.league, books:0, fixtures:0}; LEAGUES.push(L); }
+    L.fixtures += 1; L.books = Math.max(L.books, g.odds.filter(Boolean).length);
+  });
+  var picked = null; // null = every league; otherwise a set of league names
+  try { var saved = JSON.parse(localStorage.getItem('hbf.leagues') || 'null'); if (Array.isArray(saved) && saved.length) picked = saved; } catch (e) {}
+  function savePicked(){ try { picked ? localStorage.setItem('hbf.leagues', JSON.stringify(picked)) : localStorage.removeItem('hbf.leagues'); } catch (e) {} }
+  function leagueOn(name){ return !picked || picked.indexOf(name) >= 0; }
+  var chipBox = document.getElementById('leagueChips');
+  function renderChips(){
+    var sports = []; LEAGUES.forEach(function(l){ if (sports.indexOf(l.sport) < 0) sports.push(l.sport); });
+    chipBox.innerHTML = '<button type="button" class="btn ghost sm" data-league="*" aria-pressed="' + (!picked) + '">All leagues</button>' +
+      sports.map(function(sp){
+        return '<span class="sport-lbl">' + sp + '</span>' + LEAGUES.filter(function(l){ return l.sport === sp; }).map(function(l){
+          return '<button type="button" class="btn ghost sm" data-league="' + l.league + '" aria-pressed="' + (picked ? leagueOn(l.league) : false) + '" title="' + l.fixtures + ' fixtures · priced by ' + l.books + ' of ' + BOOKS.length + ' books">' + l.league + ' <span class="cov">' + l.books + '/' + BOOKS.length + '</span></button>';
+        }).join('');
+      }).join('');
+  }
+  chipBox.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-league]'); if (!b) return;
+    var name = b.dataset.league;
+    if (name === '*') picked = null;
+    else {
+      picked = picked ? picked.slice() : [];
+      var at = picked.indexOf(name);
+      if (at >= 0) picked.splice(at, 1); else picked.push(name);
+      if (!picked.length) picked = null;
+    }
+    savePicked(); renderChips(); render();
+  });
+  var dep = document.getElementById('dep'), minp = document.getElementById('minp');
+  var depOut = document.getElementById('depOut'), minpOut = document.getElementById('minpOut');
+  var tbody = document.getElementById('rows'); var sortKey = 'p'; var selected = null;
+  function fmt(x){ return x.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  function pct(x){ return (x*100).toFixed(0)+'%'; }
+  function calc(r, D){
+    var S = D*EXC, gross = S*r.best, cash = gross*EXC;
+    return {S:S, gross:gross, cash:cash, profit:cash-D, ev:100*(EXC*EXC*r.p*r.best-1), be:1/(EXC*EXC*r.best), fair:1/r.p, edge:r.best*r.p*EXC*EXC-1};
+  }
+  function render(){
+    var D = +dep.value, floor = +minp.value/100;
+    depOut.textContent = 'KES ' + D.toLocaleString(); minpOut.textContent = pct(floor);
+    var rows = ROWS.filter(function(r){return r.p >= floor && leagueOn(r.league)}).map(function(r){ r.c = calc(r, D); return r; });
+    document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
+    rows.sort(function(a,b){ return sortKey==='p' ? b.p-a.p : sortKey==='cash' ? b.c.cash-a.c.cash : b.c.ev-a.c.ev; });
+    tbody.innerHTML = rows.map(function(r, i){
+      var c = r.c, tag = c.ev > 0 ? '<span class="pill ok">value</span>' : (r.p >= 0.6 ? '<span class="pill warn">likely, pays little</span>' : '');
+      var neg = c.profit < 0 ? ' neg' : ' pos';
+      return '<tr data-i="'+ROWS.indexOf(r)+'" tabindex="0" style="cursor:pointer">' +
+        '<td><span class="k" style="color:var(--ink);font-weight:600">'+r.out+'</span><br><span style="font-size:12px">'+r.fx+' · '+r.mk+'</span><br><span style="font-size:11px;color:var(--ink-3)">'+r.league+'</span></td>' +
+        '<td><span class="bar-track"><i style="width:'+(r.p*100).toFixed(0)+'%'+(r.n < 3 ? ';background:var(--ink-3)' : '')+'"></i></span><b class="mono" style="font-weight:500;color:'+(r.n < 3 ? 'var(--ink-3)' : 'var(--ink)')+'">'+pct(r.p)+'</b> <span class="mono" style="font-size:11px;color:var(--ink-3)">n='+r.n+(r.n < 3 ? ' · thin' : '')+'</span></td>' +
+        '<td class="n">'+c.fair.toFixed(2)+'</td>' +
+        '<td class="n">'+r.best.toFixed(2)+'</td>' +
+        '<td><span class="pill book">'+r.where+'</span></td>' +
+        '<td class="n">'+fmt(c.cash)+'</td>' +
+        '<td class="n'+neg+'">'+(c.profit>=0?'+':'−')+fmt(Math.abs(c.profit))+'</td>' +
+        '<td class="n'+(c.ev<0?' neg':' pos')+'">'+(c.ev>=0?'+':'−')+Math.abs(c.ev).toFixed(1)+'</td>' +
+        '<td>'+tag+' <button type="button" class="btn ghost sm" data-acca="'+ROWS.indexOf(r)+'" aria-pressed="'+(ACCA.indexOf(ROWS.indexOf(r))>=0?'true':'false')+'">'+(ACCA.indexOf(ROWS.indexOf(r))>=0?'in acca':'+ acca')+'</button></td></tr>';
+    }).join('');
+    if (selected === null && rows.length) selected = ROWS.indexOf(rows[0]);
+    detail(D);
+  }
+  function detail(D){
+    var r = ROWS[selected]; if (!r) return; var c = calc(r, D);
+    document.getElementById('dTitle').textContent = r.out + ' — ' + r.fx;
+    document.getElementById('dKv').innerHTML =
+      '<span>Consensus probability</span><b>'+pct(r.p)+' (range '+pct(r.pmin)+'–'+pct(r.pmax)+', n='+r.n+')</b>' +
+      '<span>Fair odds</span><b>'+c.fair.toFixed(2)+'</b>' +
+      '<span>Prices quoted (' + BOOKS.map(function(b){ return b.slice(-1); }).join(' · ') + ')</span><b>'+r.all.map(function(o){return o == null ? '—' : o.toFixed(2)}).join(' · ')+'</b>' +
+      '<span>Best price vs fair</span><b>'+((r.best/c.fair-1)*100).toFixed(1)+'%</b>' +
+      '<span>Needs to win</span><b>'+pct(c.be)+' of the time</b>' +
+      '<span>Wins about</span><b>'+pct(r.p)+' of the time</b>' +
+      '<span>EV of KES 100</span><b style="color:'+(c.ev<0?'var(--crit)':'var(--ok)')+'">'+(c.ev>=0?'+':'−')+Math.abs(c.ev).toFixed(1)+'</b>';
+    document.getElementById('c0').textContent = fmt(D);
+    document.getElementById('cd1').textContent = '−' + fmt(D - c.S);
+    document.getElementById('c1').textContent = fmt(c.S);
+    document.getElementById('cLbl').textContent = 'If it wins at ' + r.best.toFixed(2) + ' (' + r.where + ')';
+    document.getElementById('cd2').textContent = '+' + fmt(c.gross - c.S);
+    document.getElementById('c2').textContent = fmt(c.gross);
+    document.getElementById('cd3').textContent = '−' + fmt(c.gross - c.cash);
+    document.getElementById('c3').textContent = fmt(c.cash);
+    var f = document.getElementById('cF'); f.textContent = fmt(c.cash); f.style.color = c.profit < 0 ? 'var(--crit)' : 'var(--ok)';
+    document.getElementById('cPct').textContent = (c.profit>=0?'+':'−') + fmt(Math.abs(c.profit)) + ' against what was sent';
+    document.getElementById('cNote').textContent = 'A ' + pct(r.p) + ' outcome loses about ' + (r.p >= 0.5 ? 'one time in ' + (1/(1-r.p)).toFixed(0) : (100-Math.round(r.p*100)) + ' times in 100') +
+      '. Over many bets like this one, KES 100 sent comes back as about KES ' + (100 + c.ev).toFixed(0) + '.';
+  }
+  var ACCA = []; // row indices in the accumulator, at most 8, one per fixture
+  tbody.addEventListener('click', function(e){
+    var ab = e.target.closest('button[data-acca]');
+    if (ab){ toggleLeg(+ab.dataset.acca); return; }
+    var tr = e.target.closest('tr'); if (!tr) return; selected = +tr.dataset.i; detail(+dep.value);
+  });
+  tbody.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ var tr = e.target.closest('tr'); if (!tr) return; e.preventDefault(); selected = +tr.dataset.i; detail(+dep.value); } });
+  // Hand-off card: what the phone carries across to the operator. No money, no account.
+  var slip = document.getElementById('slip'), slipKv = document.getElementById('slipKv'), slipText = document.getElementById('slipText');
+  var slipBet = null;
+  function seenAt(){ var d = new Date(); return d.toTimeString().slice(0, 5); }
+  function openSlip(bet){
+    var r = bet || ROWS[selected]; if (!r) return; slipBet = r; var D = +dep.value; var c = calc(r, D); var t = seenAt();
+    document.getElementById('slipTitle').textContent = 'Take this to ' + r.where;
+    var legs = r.legs ? r.legs.map(function(i){ return ROWS[i].out + ' · ' + ROWS[i].fx.split(' · ')[0] + ' · ' + ROWS[i].all[BOOKS.indexOf(r.where)].toFixed(2); }) : [r.out + ' · ' + r.fx + ' · ' + r.mk];
+    slipKv.innerHTML =
+      '<span>Operator</span><b>' + r.where + '</b>' +
+      '<span>' + (r.legs ? 'Legs' : 'Selection') + '</span><b style="text-align:right">' + legs.join('<br>') + '</b>' +
+      '<span>Price seen, ' + t + '</span><b>' + r.best.toFixed(2) + (r.legs ? ' combined' : '') + '</b>' +
+      '<span>If you send</span><b>' + fmt(D) + '</b>' +
+      '<span>Stake after 5% excise, at ' + r.where + '</span><b>' + fmt(c.S) + '</b>' +
+      '<span>Cash to M-Pesa if it wins at ' + r.best.toFixed(2) + '</span><b>' + fmt(c.cash) + '</b>' +
+      '<span>Profit if it wins</span><b style="color:' + (c.profit < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.profit >= 0 ? '+' : '−') + fmt(Math.abs(c.profit)) + '</b>' +
+      '<span>Needs to win</span><b>' + pct(c.be) + '</b>' +
+      '<span>Wins about</span><b>' + (r.p * 100).toFixed(r.legs ? 1 : 0) + '% (n' + (r.legs ? '≥' : '=') + r.n + ')</b>' +
+      '<span>EV of KES 100</span><b style="color:' + (c.ev < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.ev >= 0 ? '+' : '−') + Math.abs(c.ev).toFixed(1) + '</b>';
+    document.getElementById('slipSentence').textContent = (r.legs ? 'All ' + r.legs.length + ' legs must win. That happens about ' + (r.p >= 0.01 ? 'once in ' + Math.round(1 / r.p) : 'less than once in 100') + ' tries.' :
+      'A ' + pct(r.p) + ' outcome loses about ' + (r.p >= 0.5 ? 'one time in ' + (1/(1-r.p)).toFixed(0) : (100-Math.round(r.p*100)) + ' times in 100') + '.') +
+      ' ' + r.where + ' prices this live when you get there; the figure above was seen at ' + t + '. Nothing is placed until you confirm and pay inside ' + r.where + '.';
+    slipText.textContent = r.where + ' · ' + legs.join(' | ') + ' · seen ' + r.best.toFixed(2) + (r.legs ? ' combined' : '') + ' at ' + t + ' · sending KES ' + D;
+    var rc = document.getElementById('receipt'); rc.hidden = true; rc.textContent = '';
+    slip.hidden = false; slip.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+  document.getElementById('confirmBtn').addEventListener('click', function(){
+    var rc = document.getElementById('receipt'); rc.hidden = false;
+    rc.textContent = 'On the phone this opens ' + slipBet.where + '’s app at the event with the selection marked, or its site, or falls back to the copied slip — whichever ' + slipBet.where + ' supports. Nothing to open in this prototype.';
+  });
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var rc = document.getElementById('receipt'); rc.hidden = false;
+    try { navigator.clipboard.writeText(slipText.textContent); rc.textContent = 'Slip copied.'; } catch (e) { rc.textContent = 'Select the slip text above to copy it.'; }
+  });
+  document.getElementById('cancelBtn').addEventListener('click', function(){ slip.hidden = true; });
+  document.getElementById('placeBtn').addEventListener('click', function(){ openSlip(ROWS[selected]); });
+
+  // Accumulator builder: legs from the finder, one per fixture, priced per book as a product.
+  var MAX_LEGS = 8;
+  var accaLegs = document.getElementById('accaLegs'), accaBooks = document.getElementById('accaBooks'), accaKv = document.getElementById('accaKv'), accaNote = document.getElementById('accaNote'), accaPlace = document.getElementById('accaPlace');
+  function toggleLeg(i){
+    var at = ACCA.indexOf(i);
+    if (at >= 0){ ACCA.splice(at, 1); }
+    else {
+      var clash = ACCA.some(function(j){ return ROWS[j].fx === ROWS[i].fx; });
+      if (clash){ accaNote.textContent = 'Not added: ' + ROWS[i].out + ' is from the same fixture as a leg already in the accumulator. Legs must be independent, so one outcome per fixture.'; render(); renderAcca(); return; }
+      if (ACCA.length >= MAX_LEGS){ accaNote.textContent = 'Not added: eight legs is the limit. At this many legs the compounded margin is most of the stake.'; render(); renderAcca(); return; }
+      ACCA.push(i);
+    }
+    accaNote.textContent = ''; render(); renderAcca();
+    if (ACCA.length) document.getElementById('accaPanel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+  function accaBet(){
+    if (!ACCA.length) return null;
+    // A book missing any leg cannot take the slip; its combined price is null.
+    var per = BOOKS.map(function(_, b){ return ACCA.every(function(i){ return ROWS[i].all[b] != null; }) ? ACCA.reduce(function(o, i){ return o * ROWS[i].all[b]; }, 1) : null; });
+    var bi = per.indexOf(Math.max.apply(null, per.filter(function(x){ return x != null; })));
+    var p = ACCA.reduce(function(q, i){ return q * ROWS[i].p; }, 1);
+    var n = Math.min.apply(null, ACCA.map(function(i){ return ROWS[i].n; }));
+    return {out:'Accumulator, ' + ACCA.length + ' legs', fx:ACCA.map(function(i){ return ROWS[i].fx.split(' · ')[0]; }).join(', '),
+            where:BOOKS[bi], best:per[bi], p:p, pmin:p, pmax:p, n:n, all:per, legs:ACCA.slice(), per:per};
+  }
+  function renderAcca(){
+    var D = +dep.value; var a = accaBet();
+    if (!a){
+      accaLegs.innerHTML = '<div class="leg empty">No legs yet. Use "+ acca" on any row in § 5. One outcome per fixture, eight legs at most.</div>';
+      accaBooks.innerHTML = ''; accaKv.innerHTML = ''; accaPlace.disabled = true; accaPlace.textContent = 'Take this to the operator'; return;
+    }
+    accaLegs.innerHTML = ACCA.map(function(i){ var r = ROWS[i]; var b = BOOKS.indexOf(a.where);
+      return '<div class="leg"><span><span style="font-weight:600;color:var(--ink)">' + r.out + '</span> · ' + r.fx + '</span><b>' + pct(r.p) + '</b><b>' + r.all[b].toFixed(2) + ' at ' + a.where + '</b><button type="button" class="rm" data-rm="' + i + '">remove</button></div>';
+    }).join('');
+    var fair = 1 / a.p;
+    accaBooks.innerHTML = '<table class="books"><thead><tr><th>Book</th><th class="n">Combined price</th><th class="n">Margin vs fair</th></tr></thead><tbody>' +
+      BOOKS.map(function(bk, b){ if (a.per[b] == null) return '<tr><td>' + bk + '</td><td class="n" colspan="2" style="text-align:left;color:var(--ink-3)">does not price every leg</td></tr>';
+        return '<tr' + (bk === a.where ? ' class="best"' : '') + '><td>' + bk + (bk === a.where ? ' · best' : '') + '</td><td class="n">' + a.per[b].toFixed(2) + '</td><td class="n">' + ((1 - a.per[b] / fair) * 100).toFixed(1) + '%</td></tr>'; }).join('') +
+      '</tbody></table>';
+    var c = calc(a, D);
+    var singleMargins = ACCA.map(function(i){ var r = ROWS[i]; var b = BOOKS.indexOf(a.where); return 1 - r.all[b] * r.p; });
+    var avgSingle = singleMargins.reduce(function(x, y){ return x + y; }, 0) / singleMargins.length;
+    accaKv.innerHTML =
+      '<span>Wins about</span><b>' + (a.p * 100).toFixed(1) + '% of the time (n≥' + a.n + ')</b>' +
+      '<span>Fair combined odds</span><b>' + fair.toFixed(2) + '</b>' +
+      '<span>Best combined price</span><b>' + a.best.toFixed(2) + ' at ' + a.where + '</b>' +
+      '<span>Margin on this accumulator</span><b style="color:var(--crit)">' + ((1 - a.best / fair) * 100).toFixed(1) + '%</b>' +
+      '<span>Average margin per leg, same book</span><b>' + (avgSingle * 100).toFixed(1) + '%</b>' +
+      '<span>If you send</span><b>' + fmt(D) + '</b>' +
+      '<span>Cash to M-Pesa if all legs win</span><b>' + fmt(c.cash) + '</b>' +
+      '<span>Needs to win</span><b>' + pct(c.be) + ' of the time</b>' +
+      '<span>EV of KES 100</span><b style="color:' + (c.ev < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.ev >= 0 ? '+' : '−') + Math.abs(c.ev).toFixed(1) + '</b>';
+    accaNote.textContent = 'All ' + ACCA.length + ' legs must win. That happens about ' + (a.p >= 0.01 ? 'once in ' + Math.round(1 / a.p) : 'less than once in 100') + ' tries. The margin compounds: ' +
+      (avgSingle * 100).toFixed(1) + '% per leg becomes ' + ((1 - a.best / fair) * 100).toFixed(1) + '% on the whole slip.';
+    accaPlace.disabled = false; accaPlace.textContent = 'Take this to ' + a.where;
+  }
+  accaLegs.addEventListener('click', function(e){ var b = e.target.closest('button[data-rm]'); if (b) toggleLeg(+b.dataset.rm); });
+  accaPlace.addEventListener('click', function(){ var a = accaBet(); if (a){ selected = ACCA[0]; openSlip(a); } });
+  dep.addEventListener('input', renderAcca);
+  renderAcca();
+  dep.addEventListener('input', render); minp.addEventListener('input', render);
+  document.querySelectorAll('.seg button').forEach(function(b){ b.addEventListener('click', function(){
+    sortKey = b.dataset.sort; document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); }); render(); }); });
+  renderChips();
+  render();
+})();
+</script>
+
+</body>
+</html>
