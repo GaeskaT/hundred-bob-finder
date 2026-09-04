@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="The Hundred Bob Finder - design and working prototype of a Kenyan odds-comparison app: consensus probability, best price, cash back to M-Pesa after both excise charges, hand-off to the operator. Illustrative prices only.">
+<meta name="description" content="The Hundred Bob Finder - Kenyan odds comparison: consensus probability, best price across Betika, SportyBet and Odibets, cash back to M-Pesa after both excise charges, hand-off to the operator.">
 <style>:root{color-scheme:light dark}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -133,6 +133,9 @@ select{width:100%;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14p
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
 .seg button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.finder-note.live{margin:0 0 16px;padding:10px 14px;background:var(--ok-soft);color:var(--ink-2);border-left:3px solid var(--ok)}
+.finder-note.live b{color:var(--ok);font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600}
+.finder-note.live a{color:var(--ink-2)}
 .leagues-ctrl{padding:16px 0 14px;border-bottom:1px solid var(--rule)}
 .leagues-ctrl>label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
 .leagues-ctrl>label b{font-size:12.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-2)}
@@ -486,6 +489,7 @@ footer a{color:var(--ink-2)}
     <p class="deck">The engines above, running on an illustrative board of real clubs. Move the amount, the sort and the leagues; every figure, and the pick, recomputes from the raw prices in the table's own data.</p>
     <p>The board names the bet it would take, at the top, and says why in one sentence. The rule is fixed and printed on the card: the highest expected value among outcomes priced by at least three operators, ties to the likelier outcome. On most boards the winner of that rule still has a negative EV, and the card then says "least costly, not profitable" rather than "best bet". When an operator's price beats the fair odds by more than the two excise charges, the card changes colour and says value was found.</p>
     <div class="panel">
+      <p class="finder-note live" id="boardStatus" hidden></p>
       <div class="ctrls">
         <div class="ctrl">
           <label for="dep">Amount sent from M-Pesa <b id="depOut">KES 200</b></label>
@@ -529,7 +533,7 @@ footer a{color:var(--ink-2)}
           <tbody id="rows"></tbody>
         </table>
       </div>
-      <p class="finder-note">The clubs are real; the pairings, kick-offs and prices are <b>illustrative</b>, and the operators are unnamed on purpose: no real operator has been measured yet, and attaching invented prices to a real name is exactly the error the scorecard exists to avoid. Probability is the median de-vigged view across the four books; "n=4" means all four quoted the market. Tap a row to see its charge chain.</p>
+      <p class="finder-note" id="boardNote">The clubs are real; the pairings, kick-offs and prices are <b>illustrative</b>, and the operators are unnamed on purpose: no real operator has been measured yet, and attaching invented prices to a real name is exactly the error the scorecard exists to avoid. Probability is the median de-vigged view across the four books; "n=4" means all four quoted the market. Tap a row to see its charge chain.</p>
 
       <div class="detail-grid" id="detail">
         <div>
@@ -873,7 +877,7 @@ footer a{color:var(--ink-2)}
     <h2>Build sequence</h2>
     <p class="deck">The scorecard's Phase 1 margin tracker is the Finder's Phase 0. Build the capture once and let both products run on it.</p>
     <div class="phases">
-      <div class="phase"><div class="when">Phase 0</div><div><h4>Capture and open data</h4><p>Adapters for four operators, the alias table, the archive, and the CSV publish. No app yet. Two weeks of clean observations before anything is computed on them.</p></div></div>
+      <div class="phase"><div class="when">Phase 0</div><div><h4>Capture and open data</h4><p>Adapters for the operators whose public feeds permit it, the alias table, the archive, and the CSV publish. <strong>Built 2026-09-04:</strong> Betika, SportyBet and Odibets, football 1X2 within 48 hours, about 8,000 prices on 1,600 fixtures per capture, 146 of them priced by all three; SportPesa refused by its bot challenge and left out on purpose. The live page runs on it every 30 minutes.</p></div></div>
       <div class="phase"><div class="when">Phase 1</div><div><h4>Probability and returns, as a web table</h4><p>The § 5 finder on live data, on a plain web page, with the basic de-vig. Start collecting settled results the same day so the power exponent can be fitted by the end of the phase.</p></div></div>
       <div class="phase"><div class="when">Phase 2</div><div><h4>The Android app, with hand-off</h4><p>The three screens of § 6, English and Kiswahili, and the § 9 hand-off: event links with the selection marked where operators support them, event links or copied slips elsewhere. Calibration page goes live with the first month of results.</p></div></div>
       <div class="phase"><div class="when">Phase 3</div><div><h4>The accumulator builder</h4><p>§ 10 as a display and a hand-off: per-book combined prices, compounding shown leg by leg, the slip carried across with every leg. Ships once the calibration table has held for one month, since a multibet's probability is only as good as its legs'.</p></div></div>
@@ -913,7 +917,9 @@ footer a{color:var(--ink-2)}
   var EXC = 0.95; // deposit and withdrawal excise each leave 95%
   function median(a){ a = a.slice().sort(function(x,y){return x-y}); var m = a.length>>1; return a.length%2 ? a[m] : (a[m-1]+a[m])/2; }
   // Build rows: consensus p per outcome from basic de-vig at each book.
-  var ROWS = [];
+  var ROWS = [], LEAGUES = [], LIVE = null;
+  function loadBoard(board, books){
+  BOARD = board; BOOKS = books; ROWS.length = 0; LEAGUES.length = 0;
   BOARD.forEach(function(g){
     var quoting = g.odds.map(function(bk, b){ return bk ? b : -1; }).filter(function(b){ return b >= 0; });
     var devig = {};
@@ -930,12 +936,14 @@ footer a{color:var(--ink-2)}
     });
   });
   // Leagues on the board, with how many books price each (what the consensus can lean on).
-  var LEAGUES = [];
   BOARD.forEach(function(g){
     var L = LEAGUES.filter(function(l){ return l.league === g.league; })[0];
     if (!L){ L = {sport:g.sport, league:g.league, books:0, fixtures:0}; LEAGUES.push(L); }
     L.fixtures += 1; L.books = Math.max(L.books, g.odds.filter(Boolean).length);
   });
+  LEAGUES.sort(function(a, b){ return (b.books - a.books) || (b.fixtures - a.fixtures) || a.league.localeCompare(b.league); });
+  }
+  loadBoard(BOARD, BOOKS);
   var picked = null; // null = every league; otherwise a set of league names
   try { var saved = JSON.parse(localStorage.getItem('hbf.leagues') || 'null'); if (Array.isArray(saved) && saved.length) picked = saved; } catch (e) {}
   function savePicked(){ try { picked ? localStorage.setItem('hbf.leagues', JSON.stringify(picked)) : localStorage.removeItem('hbf.leagues'); } catch (e) {} }
@@ -1032,7 +1040,7 @@ footer a{color:var(--ink-2)}
     document.getElementById('dKv').innerHTML =
       '<span>Consensus probability</span><b>'+pct(r.p)+' (range '+pct(r.pmin)+'–'+pct(r.pmax)+', n='+r.n+')</b>' +
       '<span>Fair odds</span><b>'+c.fair.toFixed(2)+'</b>' +
-      '<span>Prices quoted (' + BOOKS.map(function(b){ return b.slice(-1); }).join(' · ') + ')</span><b>'+r.all.map(function(o){return o == null ? '—' : o.toFixed(2)}).join(' · ')+'</b>' +
+      '<span>Prices quoted</span><b style="text-align:right">'+r.all.map(function(o, b){return BOOKS[b] + ' ' + (o == null ? '—' : o.toFixed(2))}).join('<br>')+'</b>' +
       '<span>Best price vs fair</span><b>'+((r.best/c.fair-1)*100).toFixed(1)+'%</b>' +
       '<span>Needs to win</span><b>'+pct(c.be)+' of the time</b>' +
       '<span>Wins about</span><b>'+pct(r.p)+' of the time</b>' +
@@ -1159,6 +1167,29 @@ footer a{color:var(--ink-2)}
     sortKey = b.dataset.sort; document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); }); render(); }); });
   renderChips();
   render();
+
+  // The live board. When the capture pipeline has published data/board.json beside this
+  // page, it replaces the illustrative board: real operators, real prices, the capture
+  // time printed. Where the file is absent (the design artifact, a local copy) the page
+  // stays on the illustrative board and says so.
+  function showLive(b){
+    var st = document.getElementById('boardStatus'); if (!st) return;
+    var ok = b.operators.length, bad = Object.keys(b.status || {}).filter(function(k){ return !b.status[k].ok; });
+    st.hidden = false;
+    st.innerHTML = '<b>Live board</b> · captured ' + b.captured_at_eat + ' EAT from ' + b.operators.join(', ') +
+      ' · ' + b.counts.fixtures + ' fixtures in the next ' + b.window_hours + ' hours, ' + b.counts.with_consensus + ' priced by all ' + ok +
+      (bad.length ? ' · <span style="color:var(--crit)">degraded: ' + bad.join(', ') + '</span>' : '') +
+      ' · <a href="data/observations.csv">observations.csv</a> · <a href="data/board.json">board.json</a> · raw responses archived in <a href="data/raw/">data/raw</a>';
+    var note = document.getElementById('boardNote');
+    if (note) note.innerHTML = 'These are the operators’ own public prices at the capture time above, read from their pre-match feeds with an identified user agent at one request per second, and archived. Probability is the median de-vigged view across the operators quoting the fixture; a fixture priced by fewer than three shows its probability in grey. Prices move: the operator’s app prices the bet live when you get there.';
+  }
+  try {
+    fetch('data/board.json', {cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(b){
+      if (!b || !b.fixtures || !b.fixtures.length || !b.operators || b.operators.length < 2) return;
+      LIVE = b; loadBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null;
+      renderChips(); render(); renderAcca(); showLive(b);
+    }).catch(function(){});
+  } catch (e) {}
 })();
 </script>
 

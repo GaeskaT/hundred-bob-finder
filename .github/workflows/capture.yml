@@ -1,0 +1,55 @@
+name: capture odds and deploy
+
+# Every 30 minutes: read the operators' public feeds, join the fixtures, and deploy the
+# page plus the fresh board to GitHub Pages as an artifact. Nothing is committed, so the
+# repository's history does not grow by a few megabytes per capture. The latest
+# observations.csv and raw responses are published on the site, not in git.
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: run the capture
+        id: capture
+        continue-on-error: true       # a degraded capture still deploys, and says so on the page
+        run: python -m capture.run
+      - name: assemble the site
+        run: |
+          mkdir -p site
+          cp index.html README.md CAPTURE.md LICENSE site/
+          if [ -f data/board.json ]; then cp -r data site/data; else echo "no board this run"; fi
+          python - <<'EOF'
+          import json, pathlib
+          p = pathlib.Path("site/data/status.json")
+          print(p.read_text() if p.exists() else "no status file")
+          EOF
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
