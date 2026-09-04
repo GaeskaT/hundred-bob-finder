@@ -140,6 +140,18 @@ select{width:100%;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14p
 .sport-lbl{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin:0 4px 0 10px}
 .sport-lbl:first-of-type{margin-left:14px}
 .chips .cov{font-family:"IBM Plex Mono",monospace;font-size:10.5px;opacity:.8;margin-left:3px}
+.pick{margin:18px 0 6px;border:1px solid var(--accent);border-left-width:4px;background:var(--surface);padding:16px 20px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:8px 28px}
+@media(max-width:720px){.pick{grid-template-columns:1fr}}
+.pick .lbl{grid-column:1/-1;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0}
+.pick .lbl.none{color:var(--warn)}
+.pick h4{font-family:"Newsreader",Georgia,serif;font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.15;margin:0}
+.pick h4 small{display:block;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--ink-2);margin-top:4px}
+.pick .why{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink-2);line-height:1.5;margin:8px 0 0;max-width:none}
+.pick .kv{align-content:start}
+.pick .alts{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--rule);border-top:1px solid var(--rule);margin-top:10px;padding-top:1px}
+.pick .alt{background:var(--surface);padding:10px 0 0;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--ink-2)}
+.pick .alt b{display:block;color:var(--ink);font-weight:600}
+.pick .alt span{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3)}
 .finder{overflow-x:auto;margin:6px 0 0}
 table.ft{min-width:820px}
 table.ft td{padding:11px 12px}
@@ -471,7 +483,8 @@ footer a{color:var(--ink-2)}
   <div class="clause">§ 5</div>
   <div class="body">
     <h2>The bet finder, working</h2>
-    <p class="deck">The engines above, running on an illustrative board. Move the deposit and the sort; every figure recomputes from the raw prices in the table's own data.</p>
+    <p class="deck">The engines above, running on an illustrative board of real clubs. Move the amount, the sort and the leagues; every figure, and the pick, recomputes from the raw prices in the table's own data.</p>
+    <p>The board names the bet it would take, at the top, and says why in one sentence. The rule is fixed and printed on the card: the highest expected value among outcomes priced by at least three operators, ties to the likelier outcome. On most boards the winner of that rule still has a negative EV, and the card then says "least costly, not profitable" rather than "best bet". When an operator's price beats the fair odds by more than the two excise charges, the card changes colour and says value was found.</p>
     <div class="panel">
       <div class="ctrls">
         <div class="ctrl">
@@ -497,6 +510,7 @@ footer a{color:var(--ink-2)}
         <p class="finder-note" style="margin:8px 0 0">The choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
       </div>
 
+      <div class="pick" id="pick" aria-live="polite"></div>
       <div class="finder">
         <table class="ft">
           <thead>
@@ -515,7 +529,7 @@ footer a{color:var(--ink-2)}
           <tbody id="rows"></tbody>
         </table>
       </div>
-      <p class="finder-note">Prices are <b>illustrative</b> and the operators are unnamed on purpose: no real operator has been measured yet, and attaching invented prices to a real name is exactly the error the scorecard exists to avoid. Probability is the median de-vigged view across the four books; "n=4" means all four quoted the market. Tap a row to see its charge chain.</p>
+      <p class="finder-note">The clubs are real; the pairings, kick-offs and prices are <b>illustrative</b>, and the operators are unnamed on purpose: no real operator has been measured yet, and attaching invented prices to a real name is exactly the error the scorecard exists to avoid. Probability is the median de-vigged view across the four books; "n=4" means all four quoted the market. Tap a row to see its charge chain.</p>
 
       <div class="detail-grid" id="detail">
         <div>
@@ -564,19 +578,19 @@ footer a{color:var(--ink-2)}
           <div class="scr-sub">Consensus of 4 operators, captured 08:40 · 2 of 4 leagues</div>
           <div class="chip-row"><span class="chip on">Most likely</span><span class="chip">Cash if wins</span><span class="chip">Value</span></div>
           <div class="chip-row"><span class="chip on">Kenyan PL 4/4</span><span class="chip on">EPL 4/4</span><span class="chip">UCL 4/4</span><span class="chip">NBA 3/4</span></div>
-          <div class="row"><span class="f">Home win · Fixture 1</span><span class="big">76%</span><span class="o">Best 1.29 at Book B</span><span class="sm">+KES 33 if wins</span></div>
-          <div class="row"><span class="f">Over 1.5 · Fixture 4</span><span class="big">74%</span><span class="o">Best 1.30 at Book D</span><span class="sm">+KES 35 if wins</span></div>
-          <div class="row"><span class="f">Home win · Fixture 3</span><span class="big">63%</span><span class="o">Best 1.52 at Book A</span><span class="sm">+KES 74 if wins</span></div>
-          <div class="row"><span class="f">Away win · Fixture 5</span><span class="big">47%</span><span class="o">Best 2.10 at Book C</span><span class="sm">+KES 179 if wins</span></div>
+          <div class="row" style="border-color:var(--accent);border-left-width:3px"><span class="f">Pick · Barcelona to win</span><span class="big">+1.8</span><span class="o">Value found · v Inter · 2.30 at Book C beats fair 2.04 · check it is still there</span><span class="sm">EV of KES 100</span></div>
+          <div class="row"><span class="f">Gor Mahia to win</span><span class="big">76%</span><span class="o">v AFC Leopards · best 1.29 at Book B</span><span class="sm">+KES 33 if wins</span></div>
+          <div class="row"><span class="f">Tusker to win</span><span class="big">63%</span><span class="o">v Kakamega Homeboyz · best 1.52 at Book A</span><span class="sm">+KES 74 if wins</span></div>
+          <div class="row"><span class="f">Man City to win</span><span class="big">47%</span><span class="o">at Nottingham Forest · best 2.10 at Book C</span><span class="sm">+KES 179 if wins</span></div>
           <div class="cta ghost">Every row: EV of KES 100 is negative</div>
         </div></div>
-        <p class="phone-cap"><strong>Finder.</strong> The list opens on probability because that is what was asked for, with the profit-if-wins beside every row so the trade-off is visible without tapping. The second chip row is the league filter: grouped by sport, remembered on the phone, with the fraction of operators pricing each league, since a league only three of four books carry has a thinner consensus. The footer line is not removable in settings.</p>
+        <p class="phone-cap"><strong>Finder.</strong> The pick sits first, with its EV and the words "least costly on the board" when that is what it is. Below it the list opens on probability, with the profit-if-wins beside every row so the trade-off is visible without tapping. The second chip row is the league filter: grouped by sport, remembered on the phone, with the fraction of operators pricing each league, since a league only three of four books carry has a thinner consensus. The footer line is not removable in settings.</p>
       </div>
       <div>
         <div class="phone"><div class="screen">
           <div class="sb"><span>09:41</span><span>‹ back</span></div>
-          <div class="scr-title">Home win · Fixture 3</div>
-          <div class="scr-sub">Consensus 63% (range 60–66, n=4) · fair odds 1.59</div>
+          <div class="scr-title">Tusker to win</div>
+          <div class="scr-sub">v Kakamega Homeboyz · Sun 15:00 · consensus 63% (range 62–63, n=4) · fair odds 1.60</div>
           <div class="row"><span class="f">Best price 1.52</span><span class="big">Book A</span><span class="o">Others: 1.48 · 1.50 · 1.45</span><span class="sm">below fair by 4%</span></div>
           <div class="mini-chain">
             <span>Sent from M-Pesa</span><b>200.00</b>
@@ -599,12 +613,12 @@ footer a{color:var(--ink-2)}
         <div class="phone"><div class="screen">
           <div class="sb"><span>09:41</span><span>‹ back</span></div>
           <div class="scr-title">Price sheet</div>
-          <div class="scr-sub">Fixture 3 · 1X2 · captured 08:40</div>
+          <div class="scr-sub">Tusker v Kakamega Homeboyz · 1X2 · captured 08:40</div>
           <div class="sheet">
             <span class="h">Outcome</span><span class="h">A</span><span class="h">B</span><span class="h">C</span><span class="h">D</span>
-            <span class="name">Home</span><span class="best">1.52</span><span>1.48</span><span>1.50</span><span>1.45</span>
+            <span class="name">Tusker</span><span class="best">1.52</span><span>1.48</span><span>1.50</span><span>1.45</span>
             <span class="name">Draw</span><span>4.10</span><span class="best">4.30</span><span>4.00</span><span>4.20</span>
-            <span class="name">Away</span><span>6.00</span><span>5.80</span><span class="best">6.50</span><span>6.20</span>
+            <span class="name">Homeboyz</span><span>6.00</span><span>5.80</span><span class="best">6.50</span><span>6.20</span>
             <span class="name">Margin</span><span>6.8%</span><span>7.7%</span><span>6.5%</span><span>8.9%</span>
           </div>
           <p style="margin:6px 0 0;font-size:11px;color:var(--ink-2);line-height:1.45">Book C is cheapest on this market. Book D charges a third more than Book C for the same three outcomes.</p>
@@ -617,7 +631,7 @@ footer a{color:var(--ink-2)}
         <div class="phone"><div class="screen">
           <div class="sb"><span>09:42</span><span>‹ back</span></div>
           <div class="scr-title">Take this to Book A</div>
-          <div class="scr-sub">Home win · Fixture 3 · price seen 09:40</div>
+          <div class="scr-sub">Tusker to win · v Kakamega Homeboyz · price seen 09:40</div>
           <div class="row"><span class="f">Book A · 1X2 · Home</span><span class="big">1.52</span><span class="o">Book A prices it live when you get there</span><span class="sm">may have moved</span></div>
           <div class="mini-chain">
             <span>If you send</span><b>200.00</b>
@@ -641,9 +655,9 @@ footer a{color:var(--ink-2)}
           <div class="sb"><span>09:47</span><span>‹ back</span></div>
           <div class="scr-title">Accumulator · 3 legs</div>
           <div class="scr-sub">Best combined price at Book C · all legs must win</div>
-          <div class="row"><span class="f">Home win · Fixture 3</span><span class="big">1.50</span><span class="o">wins about 63%</span><span class="sm">remove</span></div>
-          <div class="row"><span class="f">Over 1.5 · Fixture 4</span><span class="big">1.29</span><span class="o">wins about 74%</span><span class="sm">remove</span></div>
-          <div class="row"><span class="f">Away win · Fixture 5</span><span class="big">2.10</span><span class="o">wins about 47%</span><span class="sm">remove</span></div>
+          <div class="row"><span class="f">Tusker to win</span><span class="big">1.50</span><span class="o">v Kakamega Homeboyz · wins about 62%</span><span class="sm">remove</span></div>
+          <div class="row"><span class="f">Over 1.5 · Real Madrid v Bayern</span><span class="big">1.29</span><span class="o">wins about 73%</span><span class="sm">remove</span></div>
+          <div class="row"><span class="f">Man City to win</span><span class="big">2.10</span><span class="o">at Nottingham Forest · wins about 46%</span><span class="sm">remove</span></div>
           <div class="mini-chain">
             <span>All three win about</span><b>21% · once in 5</b>
             <span>Fair combined odds</span><b>4.70</b>
@@ -888,13 +902,13 @@ footer a{color:var(--ink-2)}
   var BOOKS = ["Book A","Book B","Book C","Book D"];
   // Each fixture carries its sport and league; a null price means that book does not price the market.
   var BOARD = [
-    {fx:"Fixture 1 · Sat 16:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.27,5.20,9.50],[1.29,5.00,9.00],[1.26,5.30,10.0],[1.25,5.10,9.20]]},
-    {fx:"Fixture 2 · Sat 18:00", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[2.40,3.30,2.95],[2.45,3.25,2.90],[2.35,3.40,3.00],[2.38,3.20,2.98]]},
-    {fx:"Fixture 3 · Sun 15:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.52,4.10,6.00],[1.48,4.30,5.80],[1.50,4.00,6.50],[1.45,4.20,6.20]]},
-    {fx:"Fixture 4 · Sun 15:00", sport:"Football", league:"UEFA Champions League", mk:"Over/Under 1.5", out:["Over 1.5","Under 1.5"], odds:[[1.28,3.60],[1.27,3.70],[1.29,3.50],[1.30,3.45]]},
-    {fx:"Fixture 5 · Sun 17:30", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[3.60,3.50,2.05],[3.40,3.60,2.02],[3.50,3.40,2.10],[3.75,3.45,2.00]]},
-    {fx:"Fixture 6 · Sun 20:00", sport:"Football", league:"UEFA Champions League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.95,3.60,3.80],[1.90,3.70,3.90],[2.30,3.40,3.60],[1.92,3.65,3.85]]},
-    {fx:"Fixture 7 · Sun 22:00", sport:"Basketball", league:"NBA", mk:"Moneyline", out:["Home win","Away win"], odds:[[1.65,2.25],[1.62,2.30],null,[1.60,2.35]]}
+    {fx:"Gor Mahia v AFC Leopards · Sat 16:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.27,5.20,9.50],[1.29,5.00,9.00],[1.26,5.30,10.0],[1.25,5.10,9.20]]},
+    {fx:"Arsenal v Chelsea · Sat 18:00", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[2.40,3.30,2.95],[2.45,3.25,2.90],[2.35,3.40,3.00],[2.38,3.20,2.98]]},
+    {fx:"Tusker v Kakamega Homeboyz · Sun 15:00", sport:"Football", league:"Kenyan Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.52,4.10,6.00],[1.48,4.30,5.80],[1.50,4.00,6.50],[1.45,4.20,6.20]]},
+    {fx:"Real Madrid v Bayern Munich · Tue 22:00", sport:"Football", league:"UEFA Champions League", mk:"Over/Under 1.5", out:["Over 1.5","Under 1.5"], odds:[[1.28,3.60],[1.27,3.70],[1.29,3.50],[1.30,3.45]]},
+    {fx:"Nottingham Forest v Manchester City · Sun 17:30", sport:"Football", league:"English Premier League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[3.60,3.50,2.05],[3.40,3.60,2.02],[3.50,3.40,2.10],[3.75,3.45,2.00]]},
+    {fx:"Barcelona v Inter · Wed 22:00", sport:"Football", league:"UEFA Champions League", mk:"1X2", out:["Home win","Draw","Away win"], odds:[[1.95,3.60,3.80],[1.90,3.70,3.90],[2.30,3.40,3.60],[1.92,3.65,3.85]]},
+    {fx:"Los Angeles Lakers v Boston Celtics · Mon 03:30", sport:"Basketball", league:"NBA", mk:"Moneyline", out:["Home win","Away win"], odds:[[1.65,2.25],[1.62,2.30],null,[1.60,2.35]]}
   ];
   var EXC = 0.95; // deposit and withdrawal excise each leave 95%
   function median(a){ a = a.slice().sort(function(x,y){return x-y}); var m = a.length>>1; return a.length%2 ? a[m] : (a[m-1]+a[m])/2; }
@@ -905,6 +919,9 @@ footer a{color:var(--ink-2)}
     var devig = {};
     quoting.forEach(function(b){ var q = g.odds[b].map(function(o){return 1/o}); var s = q.reduce(function(a,c){return a+c},0); devig[b] = q.map(function(x){return x/s}); });
     g.out.forEach(function(name, i){
+      var teams = g.fx.split(' · ')[0].split(' v ');
+      if (name === 'Home win') name = teams[0] + ' to win';
+      else if (name === 'Away win') name = teams[1] + ' to win';
       var ps = quoting.map(function(b){ return devig[b][i]; });
       var best = -1, where = 0;
       quoting.forEach(function(b){ if (g.odds[b][i] > best){ best = g.odds[b][i]; where = b; } });
@@ -960,6 +977,7 @@ footer a{color:var(--ink-2)}
     var rows = ROWS.filter(function(r){return r.p >= floor && leagueOn(r.league)}).map(function(r){ r.c = calc(r, D); return r; });
     document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
     rows.sort(function(a,b){ return sortKey==='p' ? b.p-a.p : sortKey==='cash' ? b.c.cash-a.c.cash : b.c.ev-a.c.ev; });
+    renderPick(rows, D);
     tbody.innerHTML = rows.map(function(r, i){
       var c = r.c, tag = c.ev > 0 ? '<span class="pill ok">value</span>' : (r.p >= 0.6 ? '<span class="pill warn">likely, pays little</span>' : '');
       var neg = c.profit < 0 ? ' neg' : ' pos';
@@ -976,6 +994,37 @@ footer a{color:var(--ink-2)}
     }).join('');
     if (selected === null && rows.length) selected = ROWS.indexOf(rows[0]);
     detail(D);
+  }
+  // The pick: among rows whose consensus rests on at least three books, the highest
+  // expected value; ties to the higher probability. On a normal board that is the
+  // bet that loses least, and the card says so instead of dressing it up.
+  function renderPick(rows, D){
+    var box = document.getElementById('pick');
+    var cands = rows.filter(function(r){ return r.n >= 3; });
+    if (!cands.length){ box.innerHTML = '<p class="lbl none">Pick of the board</p><h4>No pick<small>No outcome in view has a consensus from three or more operators.</small></h4>'; return; }
+    var best = cands.slice().sort(function(a, b){ return (b.c.ev - a.c.ev) || (b.p - a.p); })[0];
+    var worst = cands.slice().sort(function(a, b){ return a.c.ev - b.c.ev; })[0];
+    var likely = cands.slice().sort(function(a, b){ return b.p - a.p; })[0];
+    var cash = cands.slice().sort(function(a, b){ return b.c.cash - a.c.cash; })[0];
+    var c = best.c, value = c.ev > 0;
+    var why = value
+      ? 'The only kind of bet worth taking: ' + best.where + '’s ' + best.best.toFixed(2) + ' beats the fair odds of ' + c.fair.toFixed(2) + ' by ' + ((best.best / c.fair - 1) * 100).toFixed(1) + '%, enough to clear both excise charges. Prices like this close fast; check it is still there.'
+      : 'Nothing on this board returns more than it costs on average. If you are betting anyway, this loses the least: about KES ' + Math.abs(c.ev).toFixed(0) + ' of every 100 sent, in expectation, against KES ' + Math.abs(worst.c.ev).toFixed(0) + ' for the board’s worst (' + worst.out + ').';
+    box.innerHTML =
+      '<p class="lbl' + (value ? '' : ' none') + '">' + (value ? 'Pick of the board · value found' : 'Pick of the board · least costly, not profitable') + '</p>' +
+      '<div><h4>' + best.out + '<small>' + best.fx + ' · ' + best.league + ' · ' + best.mk + '</small></h4><p class="why">' + why + '</p></div>' +
+      '<div class="kv">' +
+        '<span>Wins about</span><b>' + pct(best.p) + ' (n=' + best.n + ')</b>' +
+        '<span>Best price</span><b>' + best.best.toFixed(2) + ' at ' + best.where + '</b>' +
+        '<span>Send ' + fmt(D) + ', cash if it wins</span><b>' + fmt(c.cash) + '</b>' +
+        '<span>Profit if it wins</span><b style="color:' + (c.profit < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.profit >= 0 ? '+' : '−') + fmt(Math.abs(c.profit)) + '</b>' +
+        '<span>EV of KES 100</span><b style="color:' + (value ? 'var(--ok)' : 'var(--crit)') + '">' + (c.ev >= 0 ? '+' : '−') + Math.abs(c.ev).toFixed(1) + '</b>' +
+      '</div>' +
+      '<div class="alts">' +
+        '<div class="alt"><b>Most likely to win</b>' + likely.out + ' <span>' + pct(likely.p) + ' · EV ' + likely.c.ev.toFixed(1) + '</span></div>' +
+        '<div class="alt"><b>Biggest cash if it wins</b>' + cash.out + ' <span>' + fmt(cash.c.cash) + ' · wins ' + pct(cash.p) + '</span></div>' +
+        '<div class="alt"><b>How the pick is chosen</b>Highest expected value among outcomes priced by three or more operators; ties go to the likelier outcome. <span>Recomputed as you change the amount or the leagues.</span></div>' +
+      '</div>';
   }
   function detail(D){
     var r = ROWS[selected]; if (!r) return; var c = calc(r, D);
