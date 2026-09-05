@@ -38,6 +38,18 @@ its label for each outcome (`labels`, keyed by the neutral `keys`: Betika "1"/"X
 from the same responses as the prices, never rewritten; when an operator's wording is absent the
 page falls back to the neutral labels.
 
+## Fixture links
+
+Each operator's feed also identifies the fixture on that operator's own site, and the board keeps
+one link per operator (`urls`): Betika `https://www.betika.com/en-ke/m/<parent_match_id>`,
+SportyBet `https://www.sportybet.com/ke/sport/football/<categoryId>/<tournamentId>/<eventId>`,
+Odibets `https://odibets.com/sportevent/<parent_match_id>` (all three verified to open the fixture
+page on 2026-09-05; Betika and Odibets share Betradar match ids). On Android the page wraps the
+link as an `intent://` URL naming the operator's app package (Betika `com.app.betika.android`,
+SportyBet `com.sportybet.android`, Odibets `com.odibet.app`) with the web page as the fallback, so
+the app opens at the fixture when installed and the site opens otherwise; on iOS and desktop the
+plain https link is used and the operator's own universal links decide.
+
 ## Conduct
 
 - Public feeds only. No login, no session cookie, no page automation, no bettor credentials.

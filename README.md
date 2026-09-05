@@ -7,7 +7,8 @@ The app reads licensed operators' prices, strips the margin to get a consensus p
 outcome, finds the best price across operators, and shows the cash that comes back to M-Pesa after
 the 5% deposit excise and the 5% withdrawal excise. It never holds money or places bets: it hands the
 bettor to the operator's own app or site with the slip prepared in that operator's own
-wording (its team spellings, market name and outcome labels), so it can be copied straight in.
+wording (its team spellings, market name and outcome labels), so it can be copied straight in,
+and a deep link that opens the operator's app (or site) at that fixture.
 
 **Live page:** https://gaeskat.github.io/hundred-bob-finder/
 

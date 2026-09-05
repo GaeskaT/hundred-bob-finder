@@ -66,7 +66,8 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
             common = dict(operator="Betika", sport="Football", country=str(m.get("category") or ""),
                           league=str(m.get("competition_name") or ""), home=str(m["home_team"]),
                           away=str(m["away_team"]), kickoff_utc=kick, market="1X2",
-                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch)
+                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch,
+                          event_url=f"https://www.betika.com/en-ke/m/{m.get('parent_match_id')}" if m.get("parent_match_id") else "")
             for key, field in (("1", "home_odd"), ("X", "neutral_odd"), ("2", "away_odd")):
                 o = Observation(outcome=key, price=_num(m.get(field)), market_name="1X2", label=key, **common)
                 if o.valid():
@@ -128,7 +129,9 @@ def sportybet(client: PoliteClient, stamp: datetime) -> list[Observation]:
             common = dict(operator="SportyBet", sport="Football", country=str(cat.get("name") or ""),
                           league=str(t.get("name") or ""), home=str(e["homeTeamName"]),
                           away=str(e["awayTeamName"]), kickoff_utc=kick, market="1X2",
-                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch)
+                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch,
+                          event_url=(f"https://www.sportybet.com/ke/sport/football/{t.get('categoryId')}/{t.get('id')}/{e.get('eventId')}"
+                                     if t.get("categoryId") and t.get("id") and e.get("eventId") else ""))
             for oc in mk.get("outcomes") or []:
                 key = {"1": "1", "2": "X", "3": "2"}.get(str(oc.get("id")))
                 if not key or not oc.get("isActive", 1):
@@ -228,7 +231,8 @@ def _odibets_rows(rows, url, arch, stamp, seen, out):
             common = dict(operator="Odibets", sport="Football", country=str(m.get("country_name") or m.get("category_name") or ""),
                           league=str(m.get("competition_name") or ""), home=str(m["home_team"]),
                           away=str(m["away_team"]), kickoff_utc=kick, market="1X2",
-                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch)
+                          source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch,
+                          event_url=f"https://odibets.com/sportevent/{m.get('parent_match_id')}" if m.get("parent_match_id") else "")
             for oc in mk.get("outcomes") or []:
                 key = str(oc.get("outcome_key") or "")
                 if key not in ("1", "X", "2") or not oc.get("active", 1):

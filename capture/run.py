@@ -69,6 +69,7 @@ def main() -> int:
                 "odds": [[f["books"][op][mk][k] for k in keys] if mk in (f["books"].get(op) or {}) else None
                          for op in operators],
                 "names": {op: f["names"][op] for op in f["names"]},
+                "urls": {op: u for op, u in (f.get("urls") or {}).items() if u},
                 "archives": {op: f["archives"][op] for op in f["archives"]},
             })
     board_fixtures.sort(key=lambda b: b["kickoff_utc"])

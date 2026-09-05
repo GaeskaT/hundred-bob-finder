@@ -47,6 +47,7 @@ class Observation:
     collector: str = COLLECTOR
     market_name: str = ""  # the market as the operator names it ("1X2", "TOTAL", "Over/Under")
     label: str = ""        # the outcome as the operator labels it ("1", "Home", "OVER 2.5")
+    event_url: str = ""    # the operator's own page for this fixture (its app opens it too)
 
     def valid(self) -> bool:
         return all([self.operator, self.home, self.away, self.kickoff_utc, self.market,

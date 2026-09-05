@@ -193,7 +193,7 @@ td.pos{color:var(--ok)}
 
 /* slip (prototype) */
 .place{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.btn{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:10px 16px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+.btn{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;font-weight:600;padding:10px 16px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;text-decoration:none;display:inline-block;box-sizing:border-box}
 .btn.ghost{background:transparent;color:var(--accent)}
 .btn:disabled{opacity:.45;cursor:default}
 .btn.sm{padding:4px 9px;font-size:11.5px;font-weight:500}
@@ -223,6 +223,8 @@ td.pos{color:var(--ok)}
 .slip .kv .fee{color:var(--ink);font-weight:600}
 .moved{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--warn);background:var(--warn-soft);padding:9px 12px;margin:0 0 12px}
 .receipt{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13.5px;color:var(--ok);background:var(--ok-soft);padding:12px 14px;margin:12px 0 0;line-height:1.5}
+.slip-link{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink);border:1px solid var(--rule);padding:6px 10px;text-decoration:none}
+.slip-link:hover{background:var(--surface)}
 .receipt b{font-family:"IBM Plex Mono",monospace;font-weight:500}
 .slip-sentence{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;color:var(--ink-2);margin:12px 0 0;line-height:1.5;max-width:none}
 
@@ -578,10 +580,11 @@ footer a{color:var(--ink-2)}
         <p class="slip-sentence" id="slipSentence"></p>
         <pre class="mono" id="slipText" style="margin:12px 0 0;padding:12px 14px;background:var(--surface);border:1px solid var(--rule);font-size:12.5px;white-space:pre-wrap;color:var(--ink)"></pre>
         <div class="place">
-          <button type="button" class="btn" id="confirmBtn">Open the operator</button>
+          <a class="btn" id="confirmBtn" href="#" target="_blank" rel="noopener">Open the operator</a>
           <button type="button" class="btn ghost" id="copyBtn">Copy slip</button>
           <button type="button" class="btn ghost" id="cancelBtn">Close</button>
         </div>
+        <div id="slipLinks" hidden style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
         <p class="finder-note" id="receipt" hidden></p>
       </div>
     </div>
@@ -952,7 +955,7 @@ footer a{color:var(--ink-2)}
       var best = -1, where = 0;
       quoting.forEach(function(b){ if (g.odds[b][i] > best){ best = g.odds[b][i]; where = b; } });
       ROWS.push({fx:g.fx, sport:g.sport, league:g.league, mk:g.mk, kick:g.kickoff_utc || null, out:name, p:median(ps), pmin:Math.min.apply(null,ps), pmax:Math.max.apply(null,ps), n:ps.length,
-                 key:(g.keys || [])[i] || null, names:g.names || null, labels:g.labels || null, mknames:g.mknames || null,
+                 key:(g.keys || [])[i] || null, names:g.names || null, labels:g.labels || null, mknames:g.mknames || null, urls:g.urls || null,
                  best:best, where:BOOKS[where], all:g.odds.map(function(bk){ return bk ? bk[i] : null; })});
     });
   });
@@ -1136,6 +1139,17 @@ footer a{color:var(--ink-2)}
   // Hand-off card: what the phone carries across to the operator. No money, no account.
   var slip = document.getElementById('slip'), slipKv = document.getElementById('slipKv'), slipText = document.getElementById('slipText');
   var slipBet = null;
+  // The operator's own fixture page, wrapped on Android as an intent that names the operator's
+  // app (opens the app at the fixture when installed, the site otherwise). Package ids: Betika
+  // from its Play developer page; SportyBet and Odibets from their APK listings.
+  var APP_PKG = {'Betika': 'com.app.betika.android', 'SportyBet': 'com.sportybet.android', 'Odibets': 'com.odibet.app'};
+  function deepLink(url, op){
+    if (!url) return null;
+    if (/Android/i.test(navigator.userAgent) && APP_PKG[op]){
+      return 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=' + APP_PKG[op] + ';S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+    }
+    return url;
+  }
   function seenAt(){ var d = new Date(); return d.toTimeString().slice(0, 5); }
   function openSlip(bet){
     var r = bet || ROWS[selected]; if (!r) return; slipBet = r; var D = +dep.value; var c = calc(r, D); var t = seenAt();
@@ -1168,11 +1182,22 @@ footer a{color:var(--ink-2)}
       ' ' + r.where + ' prices this live when you get there; the figure above was seen at ' + t + '. Nothing is placed until you confirm and pay inside ' + r.where + '.';
     slipText.textContent = r.where + '\n' + legs.join('\n') + '\n' + (r.legs ? 'Combined ' + r.best.toFixed(2) + ' · ' : '') + 'Stake KES ' + fmt(c.S) + ' (KES ' + D + ' sent, 5% excise) · prices seen ' + t;
     var rc = document.getElementById('receipt'); rc.hidden = true; rc.textContent = '';
+    var cb = document.getElementById('confirmBtn'); var first = r.legs ? ROWS[r.legs[0]] : r; var u0 = first.urls && first.urls[r.where];
+    if (u0){ cb.href = deepLink(u0, r.where); cb.textContent = 'Open ' + (r.legs ? 'leg 1' : 'this fixture') + ' at ' + r.where; cb.removeAttribute('aria-disabled'); }
+    else { cb.href = '#'; cb.textContent = 'No link from ' + r.where + ' for this fixture'; cb.setAttribute('aria-disabled', 'true'); }
+    var lk = document.getElementById('slipLinks'); lk.innerHTML = '';
+    if (r.legs){
+      r.legs.forEach(function(i, k){ var row = ROWS[i]; var u = row.urls && row.urls[r.where]; if (!u) return;
+        var a = document.createElement('a'); a.href = deepLink(u, r.where); a.target = '_blank'; a.rel = 'noopener'; a.className = 'slip-link';
+        a.textContent = 'Leg ' + (k + 1) + ': ' + row.fx.split(' · ')[0]; lk.appendChild(a); });
+      lk.hidden = !lk.children.length;
+    } else lk.hidden = true;
     slip.hidden = false; slip.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
-  document.getElementById('confirmBtn').addEventListener('click', function(){
+  document.getElementById('confirmBtn').addEventListener('click', function(e){
     var rc = document.getElementById('receipt'); rc.hidden = false;
-    rc.textContent = 'On the phone this opens ' + slipBet.where + '’s app at the event with the selection marked, or its site, or falls back to the copied slip — whichever ' + slipBet.where + ' supports. Nothing to open in this prototype.';
+    if (this.getAttribute('aria-disabled')){ e.preventDefault(); rc.textContent = slipBet.where + ' did not identify this fixture in its feed; use the copied slip on its site.'; return; }
+    rc.textContent = 'Opening ' + slipBet.where + ' at the fixture (its app if installed, otherwise its site). Nothing is placed until you confirm and pay there.';
   });
   document.getElementById('copyBtn').addEventListener('click', function(){
     var rc = document.getElementById('receipt'); rc.hidden = false;
