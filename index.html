@@ -136,6 +136,8 @@ select{width:100%;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14p
 .finder-note.live{margin:0 0 16px;padding:10px 14px;background:var(--ok-soft);color:var(--ink-2);border-left:3px solid var(--ok)}
 .finder-note.live b{color:var(--ok);font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:600}
 .finder-note.live a{color:var(--ink-2)}
+input[type=search]{width:100%;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule-strong);padding:7px 10px;border-radius:0;-webkit-appearance:none;appearance:none}
+input[type=search]::placeholder{color:var(--ink-3)}
 .leagues-ctrl{padding:16px 0 14px;border-bottom:1px solid var(--rule)}
 .leagues-ctrl>label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
 .leagues-ctrl>label b{font-size:12.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-2)}
@@ -498,6 +500,10 @@ footer a{color:var(--ink-2)}
         <div class="ctrl">
           <label for="minp">Minimum probability <b id="minpOut">0%</b></label>
           <input type="range" id="minp" min="0" max="90" step="5" value="0">
+        </div>
+        <div class="ctrl">
+          <label for="fxq">Find a fixture <b id="fxqOut"></b></label>
+          <input type="search" id="fxq" placeholder="team, league or outcome, e.g. arsenal chelsea" autocomplete="off" spellcheck="false">
         </div>
         <div class="ctrl">
           <label>Sort by</label>
@@ -996,7 +1002,17 @@ footer a{color:var(--ink-2)}
   function render(){
     var D = +dep.value, floor = +minp.value/100;
     depOut.textContent = 'KES ' + D.toLocaleString(); minpOut.textContent = pct(floor);
-    var rows = ROWS.filter(function(r){return r.p >= floor && leagueOn(r.league)}).map(function(r){ r.c = calc(r, D); return r; });
+    // Fixture search: every word typed must appear somewhere in the fixture, the
+    // outcome or the league, so "arsenal chelsea" finds the match and "over bayern"
+    // finds one market of it. Combined with the league filter and the probability floor.
+    var q = (document.getElementById('fxq').value || '').toLowerCase().split(/\s+/).filter(Boolean);
+    var rows = ROWS.filter(function(r){
+      if (r.p < floor || !leagueOn(r.league)) return false;
+      if (!q.length) return true;
+      var hay = (r.fx + ' ' + r.out + ' ' + r.league + ' ' + r.mk).toLowerCase();
+      return q.every(function(w){ return hay.indexOf(w) >= 0; });
+    }).map(function(r){ r.c = calc(r, D); return r; });
+    document.getElementById('fxqOut').textContent = q.length ? rows.length + ' match' + (rows.length === 1 ? '' : 'es') : '';
     document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
     rows.sort(function(a,b){ return sortKey==='p' ? b.p-a.p : sortKey==='cash' ? b.c.cash-a.c.cash : b.c.ev-a.c.ev; });
     renderPick(rows, D);
@@ -1177,6 +1193,8 @@ footer a{color:var(--ink-2)}
   dep.addEventListener('input', renderAcca);
   renderAcca();
   dep.addEventListener('input', render); minp.addEventListener('input', render);
+  document.getElementById('fxq').addEventListener('input', render);
+  document.getElementById('fxq').addEventListener('search', render);   // the clear (x) button
   document.querySelectorAll('.seg button').forEach(function(b){ b.addEventListener('click', function(){
     sortKey = b.dataset.sort; document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); }); render(); }); });
   renderChips();
