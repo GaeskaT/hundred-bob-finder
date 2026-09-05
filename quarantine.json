@@ -1,0 +1,1322 @@
+[
+ {
+  "operator": "SportyBet",
+  "home": "FK Teplice B",
+  "away": "FK Pardubice B",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "FC Hradec Kralove v FK Pardubice",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "SportyBet",
+  "home": "LOSC Lille",
+  "away": "C Chartres Football",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "LOSC Lille v AJ Auxerre",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "SportyBet",
+  "home": "SK Brann 2",
+  "away": "Vard Haugesund",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "SK Brann v FK Fortuna Alesund",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "AFC Ajax W",
+  "away": "de Graafschap",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "Ajax Amsterdam v de Graafschap",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "AFC Ajax W",
+  "away": "de Graafschap",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "Ajax Amsterdam v de Graafschap",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "AL Waab",
+  "away": "Qatar U23",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "AL Waab v Qatar",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "AZ Alkmaar",
+  "away": "FC Utrecht W",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "AZ Alkmaar v FC Utrecht",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "AZ Alkmaar",
+  "away": "FC Utrecht W",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "AZ Alkmaar v FC Utrecht",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Atletico Madrid",
+  "away": "Deportivo Alaves",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Atletico Madrid W v Deportivo Alaves",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Atletico Madrid",
+  "away": "Deportivo Alaves",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Atletico Madrid W v Deportivo Alaves",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Atromitos Athens",
+  "away": "Kalamata",
+  "kickoff_utc": "2026-09-06T16:00+00:00",
+  "near": "Atromitos Athinon v PAE PS Kalamata",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Atromitos Athens",
+  "away": "Kalamata",
+  "kickoff_utc": "2026-09-06T16:00+00:00",
+  "near": "Atromitos Athinon v PAE PS Kalamata",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Avondale FC",
+  "away": "Boroondara Eagles Women",
+  "kickoff_utc": "2026-09-06T04:00+00:00",
+  "near": "Avondale FC v Boroondara Eagles",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Avondale FC",
+  "away": "Boroondara Eagles Women",
+  "kickoff_utc": "2026-09-06T04:00+00:00",
+  "near": "Avondale FC v Boroondara Eagles",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Bialystok",
+  "away": "Escola Varsovia Warszawa",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Bialystok v Escola Varsovia Warszawa U19",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Bialystok",
+  "away": "Escola Varsovia Warszawa",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Bialystok v Escola Varsovia Warszawa U19",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Bom Jesus EC",
+  "away": "Sao Luis Atletico Clube",
+  "kickoff_utc": "2026-09-06T18:30+00:00",
+  "near": "Bom Jesus EC v Crixas EC GO",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Brighton and Hove Albion WFC",
+  "away": "Arsenal W",
+  "kickoff_utc": "2026-09-06T11:00+00:00",
+  "near": "Brighton and Hove Albion WFC v Arsenal WFC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Brighton and Hove Albion WFC",
+  "away": "Arsenal W",
+  "kickoff_utc": "2026-09-06T11:00+00:00",
+  "near": "Brighton and Hove Albion WFC v Arsenal WFC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "CD Palestino",
+  "away": "U. de Concep",
+  "kickoff_utc": "2026-09-06T22:30+00:00",
+  "near": "CD Palestino v Universidad de Concepcion",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "CD Palestino",
+  "away": "U. de Concep",
+  "kickoff_utc": "2026-09-06T22:30+00:00",
+  "near": "CD Palestino v Universidad de Concepcion",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "CE Sabadell FC",
+  "away": "UD Montecarlo",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "CE Sabadell FC U19 v UD Montecarlo",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "CE Sabadell FC",
+  "away": "UD Montecarlo",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "CE Sabadell FC U19 v UD Montecarlo",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Cadiz CF",
+  "away": "FC SEVILLA U19",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Cadiz CF v Sevilla FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Cadiz CF",
+  "away": "FC SEVILLA U19",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Cadiz CF v Sevilla FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Consadole S",
+  "away": "Tochigi Uva",
+  "kickoff_utc": "2026-09-06T04:00+00:00",
+  "near": "Hokkaido Consadole Sapporo v Tochigi City FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Consadole S",
+  "away": "Tochigi Uva",
+  "kickoff_utc": "2026-09-06T04:00+00:00",
+  "near": "Hokkaido Consadole Sapporo v Tochigi City FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Cruz Azul",
+  "away": "Santos Laguna",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Cruz Azul v Santos Laguna U21",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Cruz Azul",
+  "away": "Santos Laguna",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Cruz Azul v Santos Laguna U21",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Crvena Zvezda U19",
+  "away": "FK IMT",
+  "kickoff_utc": "2026-09-06T07:30+00:00",
+  "near": "FK Crvena Zvezda v FK IMT",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Crvena Zvezda U19",
+  "away": "FK IMT",
+  "kickoff_utc": "2026-09-06T07:30+00:00",
+  "near": "FK Crvena Zvezda v FK IMT",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Crystal Palace Women",
+  "away": "Everton Women",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Crystal Palace v Everton FC Women",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Crystal Palace Women",
+  "away": "Everton Women",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Crystal Palace v Everton FC Women",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Csakvari",
+  "away": "Szeged",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Aqvital FC Csakvar v Szeged-Csanad Grosics Akademia",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Csakvari",
+  "away": "Szeged",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Aqvital FC Csakvar v Szeged-Csanad Grosics Akademia",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Desamparados",
+  "away": "Municipal S. A.",
+  "kickoff_utc": "2026-09-05T20:00+00:00",
+  "near": "Futbol Consultants Desamparados v AD Municipal Santa Ana",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Desamparados",
+  "away": "Municipal S. A.",
+  "kickoff_utc": "2026-09-05T20:00+00:00",
+  "near": "Futbol Consultants Desamparados v AD Municipal Santa Ana",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Etoile Sportive du Sahel",
+  "away": "Omrane",
+  "kickoff_utc": "2026-09-06T15:30+00:00",
+  "near": "ES Sahel v JS Omrane",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Etoile Sportive du Sahel",
+  "away": "Omrane",
+  "kickoff_utc": "2026-09-06T15:30+00:00",
+  "near": "ES Sahel v JS Omrane",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Belusa",
+  "away": "D. Luzna",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "FK Belusa v OFK Dunajska Luzna",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Belusa",
+  "away": "D. Luzna",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "FK Belusa v OFK Dunajska Luzna",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Rubin Kazan",
+  "away": "Zenit Saint Petersburg Women",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "FK Rubin Kazan v FC Zenit Saint Petersburg",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Rubin Kazan",
+  "away": "Zenit Saint Petersburg Women",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "FK Rubin Kazan v FC Zenit Saint Petersburg",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Spartak Subotica",
+  "away": "FK BRODARAC U19",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "FK Spartak Subotica v FK Brodarac",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Tukums 2000/Tss II",
+  "away": "Leevon PPK",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "FK Tukums 2000/Tss II v Saldus SS/Leevon",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "FK Tukums 2000/Tss II",
+  "away": "Leevon PPK",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "FK Tukums 2000/Tss II v Saldus SS/Leevon",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Feyenoord Rotterdam",
+  "away": "PSV W",
+  "kickoff_utc": "2026-09-06T10:15+00:00",
+  "near": "Feyenoord Rotterdam v PSV Eindhoven",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Feyenoord Rotterdam",
+  "away": "PSV W",
+  "kickoff_utc": "2026-09-06T10:15+00:00",
+  "near": "Feyenoord Rotterdam v PSV Eindhoven",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Forge Hamilton",
+  "away": "York United",
+  "kickoff_utc": "2026-09-05T23:00+00:00",
+  "near": "Forge FC Hamilton v Inter Toronto",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Forge Hamilton",
+  "away": "York United",
+  "kickoff_utc": "2026-09-05T23:00+00:00",
+  "near": "Forge FC Hamilton v Inter Toronto",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Forte Virtus FC",
+  "away": "Dibba Al-Hisn",
+  "kickoff_utc": "2026-09-06T15:05+00:00",
+  "near": "Gulf FC v Dibba Al-Hisn SC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Forte Virtus FC",
+  "away": "Dibba Al-Hisn",
+  "kickoff_utc": "2026-09-06T15:05+00:00",
+  "near": "Gulf FC v Dibba Al-Hisn SC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Fortuna Cologne",
+  "away": "Dusseldorf",
+  "kickoff_utc": "2026-09-06T17:30+00:00",
+  "near": "Fortuna Cologne v Fortuna D",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Fortuna Cologne",
+  "away": "Dusseldorf",
+  "kickoff_utc": "2026-09-06T17:30+00:00",
+  "near": "Fortuna Cologne v Fortuna D",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "GFC Ajaccio U19",
+  "away": "Cavigal Nice SF U19",
+  "kickoff_utc": "2026-09-06T11:00+00:00",
+  "near": "GFC Ajaccio v Cavigal Nice SF U19",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Grenoble Foot 38",
+  "away": "Metz Women ",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Grenoble Foot 38 v Metz FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Grindavik/Njarovik",
+  "away": "Valur Reykjavik W",
+  "kickoff_utc": "2026-09-06T16:30+00:00",
+  "near": "Grindavik/Njarovik v Valur Reykjavik",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Grindavik/Njarovik",
+  "away": "Valur Reykjavik W",
+  "kickoff_utc": "2026-09-06T16:30+00:00",
+  "near": "Grindavik/Njarovik v Valur Reykjavik",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Guadalupe",
+  "away": "Ur. d. Coronado",
+  "kickoff_utc": "2026-09-06T02:00+00:00",
+  "near": "Guadalupe FC v CS Uruguay de Coronado",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Guadalupe",
+  "away": "Ur. d. Coronado",
+  "kickoff_utc": "2026-09-06T02:00+00:00",
+  "near": "Guadalupe FC v CS Uruguay de Coronado",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Gyori ETO",
+  "away": "Budapest Honved",
+  "kickoff_utc": "2026-09-06T18:00+00:00",
+  "near": "WKW ETO FC Gyor v Budapest Honved FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Gyori ETO",
+  "away": "Budapest Honved",
+  "kickoff_utc": "2026-09-06T18:00+00:00",
+  "near": "WKW ETO FC Gyor v Budapest Honved FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Hannoverscher SC",
+  "away": "Weiche",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "HSC Hannover v SC Weiche Flensburg 08",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Hannoverscher SC",
+  "away": "Weiche",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "HSC Hannover v SC Weiche Flensburg 08",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Hapoel Petah Tikva Nahum",
+  "away": "Hap. Rishon Letzion U19",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Hapoel Petah Tikva Nahum v Hapoel Rishon Letzion",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Hearts",
+  "away": "Dundee FC",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Heart of Midlothian FC v Dundee FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Hearts",
+  "away": "Dundee FC",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Heart of Midlothian FC v Dundee FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Ichihara Chiba",
+  "away": "Gamba Osaka",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "JEF United Chiba v Gamba Osaka",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Ichihara Chiba",
+  "away": "Gamba Osaka",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "JEF United Chiba v Gamba Osaka",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Ind. Del Valle",
+  "away": "CSD Macara",
+  "kickoff_utc": "2026-09-05T23:00+00:00",
+  "near": "CSD Independiente del Valle v CSD Macara",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Ind. Del Valle",
+  "away": "CSD Macara",
+  "kickoff_utc": "2026-09-05T23:00+00:00",
+  "near": "CSD Independiente del Valle v CSD Macara",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Itabirito FC MG",
+  "away": "Minas Brasilia W",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Itabirito FC MG v Minas Brasilia DF",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Japan U20 Women",
+  "away": "New Zealand",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Japan v New Zealand",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Jeunesse Esch",
+  "away": "Wiltz 71",
+  "kickoff_utc": "2026-09-06T17:00+00:00",
+  "near": "AS La Jeunesse D Esch/Alzette v FC Wiltz 71",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Jeunesse Esch",
+  "away": "Wiltz 71",
+  "kickoff_utc": "2026-09-06T17:00+00:00",
+  "near": "AS La Jeunesse D Esch/Alzette v FC Wiltz 71",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Jupiter Leones",
+  "away": "CD Colegios Diocesanos",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Cultural Deportiva Leonesa B v CD Colegios Diocesanos",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Jupiter Leones",
+  "away": "CD Colegios Diocesanos",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "Cultural Deportiva Leonesa B v CD Colegios Diocesanos",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Juventus Turin",
+  "away": "AC Milan",
+  "kickoff_utc": "2026-09-06T10:30+00:00",
+  "near": "Juventus Turin W v AC Milan",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Juventus Turin",
+  "away": "AC Milan",
+  "kickoff_utc": "2026-09-06T10:30+00:00",
+  "near": "Juventus Turin W v AC Milan",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Kocaelispor U19",
+  "away": "Samsunspor",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Kocaelispor v Samsunspor",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Kocaelispor U19",
+  "away": "Samsunspor",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Kocaelispor v Samsunspor",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "LILLE U19",
+  "away": "C Chartres Football",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "LOSC Lille v C Chartres Football",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "LILLE U19",
+  "away": "C Chartres Football",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "LOSC Lille v C Chartres Football",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "LOSC Lille W",
+  "away": "AJ Auxerre",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "LOSC Lille v AJ Auxerre",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Leuven W",
+  "away": "Gent W",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Oud-Heverlee Leuven W v KAA Gent",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Lierse Kempenzonen",
+  "away": "RFC Liege",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Koninklijke Lierse Sportkring v RFC Liege",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Lierse Kempenzonen",
+  "away": "RFC Liege",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Koninklijke Lierse Sportkring v RFC Liege",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Lokomotive Sofia",
+  "away": "Ludogorets 1945",
+  "kickoff_utc": "2026-09-06T18:15+00:00",
+  "near": "FC Lokomotiv 1929 Sofia v Ludogorets",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Lokomotive Sofia",
+  "away": "Ludogorets 1945",
+  "kickoff_utc": "2026-09-06T18:15+00:00",
+  "near": "FC Lokomotiv 1929 Sofia v Ludogorets",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Luis Angel Firpo",
+  "away": "Inter Santa Tecla",
+  "kickoff_utc": "2026-09-06T23:30+00:00",
+  "near": "CD Luis Angel Firpo Usulutan v Inter Formando UN Atleta",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Luis Angel Firpo",
+  "away": "Inter Santa Tecla",
+  "kickoff_utc": "2026-09-06T23:30+00:00",
+  "near": "CD Luis Angel Firpo Usulutan v Inter Formando UN Atleta",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "MKS Korona Kielce",
+  "away": "Rakow Czestochowa",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "MKS Korona Kielce v Rakow Czestochowa U19",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "MKS Korona Kielce",
+  "away": "Rakow Czestochowa",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "MKS Korona Kielce v Rakow Czestochowa U19",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "MTK Hungaria II",
+  "away": "Dunaharaszti",
+  "kickoff_utc": "2026-09-06T11:00+00:00",
+  "near": "MTK Budapest II v Dunaharaszti MTK",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Manchester City Women",
+  "away": "Birmingham",
+  "kickoff_utc": "2026-09-06T13:30+00:00",
+  "near": "Manchester City WFC v Birmingham City WFC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Menemenspor",
+  "away": "Inegol Kafkas Genclikspor",
+  "kickoff_utc": "2026-09-06T16:00+00:00",
+  "near": "Menemen Belediyespor v Inegol Kafkas Genclikspor",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Menemenspor",
+  "away": "Inegol Kafkas Genclikspor",
+  "kickoff_utc": "2026-09-06T16:00+00:00",
+  "near": "Menemen Belediyespor v Inegol Kafkas Genclikspor",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Merelbeke",
+  "away": "C. Brugge",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "KFC Merelbeke v Cercle Brugge",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Merelbeke",
+  "away": "C. Brugge",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "KFC Merelbeke v Cercle Brugge",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Montrose FC",
+  "away": "Heart of Midlothian Women",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "Montrose FC v Heart of Midlothian WFC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Montrose FC",
+  "away": "Heart of Midlothian Women",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "Montrose FC v Heart of Midlothian WFC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Munich Women ",
+  "away": "Freiburg Women ",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Bayern Munich W v SC Freiburg",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Munich Women ",
+  "away": "Freiburg Women ",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Bayern Munich W v SC Freiburg",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "NK Solin",
+  "away": "HKN Rijeka U19",
+  "kickoff_utc": "2026-09-06T10:00+00:00",
+  "near": "NK Solin v HNK Rijeka",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Nuremberg Women",
+  "away": "VfB Stuttgart",
+  "kickoff_utc": "2026-09-06T16:30+00:00",
+  "near": "1. FC Nuremberg v VfB Stuttgart",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Nuremberg Women",
+  "away": "VfB Stuttgart",
+  "kickoff_utc": "2026-09-06T16:30+00:00",
+  "near": "1. FC Nuremberg v VfB Stuttgart",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "OGC Nice W",
+  "away": "AS Cannes",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "OGC Nice v AS Cannes",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Orijent Rijeka",
+  "away": "Zmijavci",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Orijent 1919 Rijeka v NK Croatia Zmijavci",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Orijent Rijeka",
+  "away": "Zmijavci",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Orijent 1919 Rijeka v NK Croatia Zmijavci",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "PEC Zwolle W",
+  "away": "ADO Den Haag",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "PEC Zwolle v ADO Den Haag",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "PEC Zwolle W",
+  "away": "ADO Den Haag",
+  "kickoff_utc": "2026-09-06T14:45+00:00",
+  "near": "PEC Zwolle v ADO Den Haag",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "PT Satun FC",
+  "away": "Kanchanaburi Power FC",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "Satun United FC v Kanchanaburi Power FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "PT Satun FC",
+  "away": "Kanchanaburi Power FC",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "Satun United FC v Kanchanaburi Power FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Panathinaikos",
+  "away": "PAOK",
+  "kickoff_utc": "2026-09-06T18:30+00:00",
+  "near": "Panathinaikos Athens v PAOK Thessaloniki",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Panathinaikos",
+  "away": "PAOK",
+  "kickoff_utc": "2026-09-06T18:30+00:00",
+  "near": "Panathinaikos Athens v PAOK Thessaloniki",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Paris FC W",
+  "away": "FC Nantes W",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Paris FC W v FC Nantes",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Paris FC W",
+  "away": "FC Nantes W",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Paris FC W v FC Nantes",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Parnu Vaprus II",
+  "away": "Tallinna Kalev U21",
+  "kickoff_utc": "2026-09-06T09:30+00:00",
+  "near": "Parnu JK Vaprus II v JK Tallinna Kalev",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "RCS Onhaye",
+  "away": "RWD Molenbeek 47",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "RCS Onhaye v RWDM Brussels",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "RCS Onhaye",
+  "away": "RWD Molenbeek 47",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "RCS Onhaye v RWDM Brussels",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Rayados De Chiriqui",
+  "away": "Udelas FC",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "Academia Mario Mendez v Udelas FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Rayados De Chiriqui",
+  "away": "Udelas FC",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "Academia Mario Mendez v Udelas FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Real Madrid",
+  "away": "SD Eibar",
+  "kickoff_utc": "2026-09-06T18:30+00:00",
+  "near": "Real Madrid W v SD Eibar",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Real Madrid",
+  "away": "SD Eibar",
+  "kickoff_utc": "2026-09-06T18:30+00:00",
+  "near": "Real Madrid W v SD Eibar",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SK Brann 2",
+  "away": "Vard Haugesund",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "SK Brann v FK Fortuna Alesund",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SK Brann 2",
+  "away": "Vard Haugesund",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "SK Brann v FK Fortuna Alesund",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SL de Quillota",
+  "away": "Cobreloa",
+  "kickoff_utc": "2026-09-05T21:30+00:00",
+  "near": "San Luis de Quillota v CD Cobreloa Calama",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SL de Quillota",
+  "away": "Cobreloa",
+  "kickoff_utc": "2026-09-05T21:30+00:00",
+  "near": "San Luis de Quillota v CD Cobreloa Calama",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SSD Napoli",
+  "away": "Parma W",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "SSC Napoli v Parma Calcio",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "SSD Napoli",
+  "away": "Parma W",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "SSC Napoli v Parma Calcio",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Seattle Reign FC",
+  "away": "San Diego Wave FC",
+  "kickoff_utc": "2026-09-07T01:00+00:00",
+  "near": "OL Reign v San Diego Wave FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Seattle Reign FC",
+  "away": "San Diego Wave FC",
+  "kickoff_utc": "2026-09-07T01:00+00:00",
+  "near": "OL Reign v San Diego Wave FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Sochaux-Montbeliard",
+  "away": "Montfermeil FC U19",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "Sochaux-Montbeliard v Montfermeil FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Sochaux-Montbeliard",
+  "away": "Montfermeil FC U19",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "Sochaux-Montbeliard v Montfermeil FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Tampico Madero",
+  "away": "Venados",
+  "kickoff_utc": "2026-09-06T01:00+00:00",
+  "near": "Jaiba Brava v Venados  FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Tampico Madero",
+  "away": "Venados",
+  "kickoff_utc": "2026-09-06T01:00+00:00",
+  "near": "Jaiba Brava v Venados  FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Trabzonspor U19",
+  "away": "Genclerbirligi Ankara",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Trabzonspor v Genclerbirligi Ankara",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Trabzonspor U19",
+  "away": "Genclerbirligi Ankara",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Trabzonspor v Genclerbirligi Ankara",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "U. de Chile",
+  "away": "Coquimbo U.",
+  "kickoff_utc": "2026-09-06T00:00+00:00",
+  "near": "Universidad de Chile v Coquimbo Unido",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "U. de Chile",
+  "away": "Coquimbo U.",
+  "kickoff_utc": "2026-09-06T00:00+00:00",
+  "near": "Universidad de Chile v Coquimbo Unido",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "U. de Chile W",
+  "away": "Huachipato",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "Universidad de Chile v Huachipato",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "U. de Chile W",
+  "away": "Huachipato",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "Universidad de Chile v Huachipato",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "US Colomiers U19",
+  "away": "Montpellier HSC",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "US Colomiers v Montpellier HSC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "US Colomiers U19",
+  "away": "Montpellier HSC",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "US Colomiers v Montpellier HSC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Universidad Latina",
+  "away": "CA Independiente B",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "America de Cali Sa v Independiente Santa Fe",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Universidad Latina",
+  "away": "CA Independiente B",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "CD Universitario II v CA Independiente B",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Universidad Latina",
+  "away": "CA Independiente B",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "America de Cali Sa v Independiente Santa Fe",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Universidad Latina",
+  "away": "CA Independiente B",
+  "kickoff_utc": "2026-09-05T21:00+00:00",
+  "near": "CD Universitario II v CA Independiente B",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Volos NPS",
+  "away": "OLYMPIACOS FC U19",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "Volos NPS v Olympiacos Piraeus",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Volos NPS",
+  "away": "OLYMPIACOS FC U19",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "Volos NPS v Olympiacos Piraeus",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Vonds Ichihara FC",
+  "away": "Nittaidai FC",
+  "kickoff_utc": "2026-09-06T06:00+00:00",
+  "near": "Ichihara Vonds v Nittaidai FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Vonds Ichihara FC",
+  "away": "Nittaidai FC",
+  "kickoff_utc": "2026-09-06T06:00+00:00",
+  "near": "Ichihara Vonds v Nittaidai FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Wolfsburg Women ",
+  "away": "Bremen Women ",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "VfL Wolfsburg W v Werder Bremen",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Betika",
+  "home": "Wolfsburg Women ",
+  "away": "Bremen Women ",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "VfL Wolfsburg W v Werder Bremen",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Angers SCO",
+  "away": "Stade Rennais FC",
+  "kickoff_utc": "2026-09-06T15:15+00:00",
+  "near": "Angers v Rennes",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Bayern Munich",
+  "away": "SC Freiburg",
+  "kickoff_utc": "2026-09-06T14:00+00:00",
+  "near": "Bayern Munich W v SC Freiburg",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Cruzeiro EC MG",
+  "away": "CA Paranaense PR",
+  "kickoff_utc": "2026-09-06T19:00+00:00",
+  "near": "Cruzeiro v Atlético Paranaense",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "ESTAC Troyes",
+  "away": "Strasbourg Alsace",
+  "kickoff_utc": "2026-09-06T13:00+00:00",
+  "near": "Estac Troyes v Nancy-Lorraine",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Enugu Rangers International FC",
+  "away": "AS Sobemap",
+  "kickoff_utc": "2026-09-06T15:00+00:00",
+  "near": "Angers v Rennes",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Everton FC SRL",
+  "away": "Manchester United FC SRL",
+  "kickoff_utc": "2026-09-06T09:00+00:00",
+  "near": "Everton SRL v Man Utd SRL",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Juticalpa FC",
+  "away": "CD Genesis PN",
+  "kickoff_utc": "2026-09-07T01:30+00:00",
+  "near": "Juticalpa FC v FC Policia Nacional",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Maghreb AS de Fes",
+  "away": "Rahimo FC",
+  "kickoff_utc": "2026-09-06T19:00+00:00",
+  "near": "Mas Maghrib v Rahimo FC",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "Malaga CF",
+  "away": "Levante UD",
+  "kickoff_utc": "2026-09-06T16:30+00:00",
+  "near": "Atletico Saguntino v Atletico Levante UD",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "VfL Wolfsburg",
+  "away": "Werder Bremen",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "1. FC Phonix Lubeck v SV Werder Bremen II",
+  "reason": "one team matched"
+ },
+ {
+  "operator": "Odibets",
+  "home": "VfL Wolfsburg",
+  "away": "Werder Bremen",
+  "kickoff_utc": "2026-09-06T12:00+00:00",
+  "near": "VfL Wolfsburg W v Werder Bremen",
+  "reason": "one team matched"
+ }
+]

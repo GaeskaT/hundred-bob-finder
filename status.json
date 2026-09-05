@@ -1,0 +1,30 @@
+{
+  "captured_at": "2026-09-05T19:04:03+00:00",
+  "status": {
+    "Betika": {
+      "ok": true,
+      "observations": 4446,
+      "fixtures": 928
+    },
+    "SportyBet": {
+      "ok": true,
+      "observations": 4756,
+      "fixtures": 997
+    },
+    "Odibets": {
+      "ok": true,
+      "observations": 519,
+      "fixtures": 173
+    }
+  },
+  "counts": {
+    "observations": 9721,
+    "fixtures": 1206,
+    "markets": [
+      "1X2",
+      "O/U 2.5"
+    ],
+    "with_consensus": 93,
+    "quarantine": 165
+  }
+}
