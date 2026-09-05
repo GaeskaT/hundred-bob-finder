@@ -952,6 +952,7 @@ footer a{color:var(--ink-2)}
       var best = -1, where = 0;
       quoting.forEach(function(b){ if (g.odds[b][i] > best){ best = g.odds[b][i]; where = b; } });
       ROWS.push({fx:g.fx, sport:g.sport, league:g.league, mk:g.mk, kick:g.kickoff_utc || null, out:name, p:median(ps), pmin:Math.min.apply(null,ps), pmax:Math.max.apply(null,ps), n:ps.length,
+                 key:(g.keys || [])[i] || null, names:g.names || null, labels:g.labels || null, mknames:g.mknames || null,
                  best:best, where:BOOKS[where], all:g.odds.map(function(bk){ return bk ? bk[i] : null; })});
     });
   });
@@ -1139,7 +1140,18 @@ footer a{color:var(--ink-2)}
   function openSlip(bet){
     var r = bet || ROWS[selected]; if (!r) return; slipBet = r; var D = +dep.value; var c = calc(r, D); var t = seenAt();
     document.getElementById('slipTitle').textContent = 'Take this to ' + r.where;
-    var legs = r.legs ? r.legs.map(function(i){ return ROWS[i].out + ' · ' + ROWS[i].fx.split(' · ')[0] + ' · ' + ROWS[i].all[BOOKS.indexOf(r.where)].toFixed(2); }) : [r.out + ' · ' + r.fx + ' · ' + r.mk];
+    // Each leg in the OPERATOR's own words: its spelling of the teams, its market name and
+    // its outcome label ("1" at Betika, "Home" at SportyBet, "OVER 2.5" vs "Over 2.5"),
+    // so the slip can be typed or pasted into that site exactly as it appears there.
+    var bi = BOOKS.indexOf(r.where);
+    var slipLine = function(row){
+      var nm = row.names && row.names[r.where]; var teams = nm ? nm[0] + ' v ' + nm[1] : row.fx.split(' · ')[0];
+      var mkn = (row.mknames && row.mknames[r.where]) || row.mk;
+      var lab = (row.labels && row.labels[r.where] && row.key && row.labels[r.where][row.key]) || row.out;
+      var when = row.kick ? new Intl.DateTimeFormat('en-GB', {timeZone: 'Africa/Nairobi', weekday: 'short', hour: '2-digit', minute: '2-digit'}).format(new Date(row.kick)) : row.fx.split(' · ')[1] || '';
+      return teams + ' · ' + mkn + ' · ' + lab + ' @ ' + row.all[bi].toFixed(2) + (when ? ' · ' + when : '');
+    };
+    var legs = r.legs ? r.legs.map(function(i){ return slipLine(ROWS[i]); }) : [slipLine(r)];
     slipKv.innerHTML =
       '<span>Operator</span><b>' + r.where + '</b>' +
       '<span>' + (r.legs ? 'Legs' : 'Selection') + '</span><b style="text-align:right">' + legs.join('<br>') + '</b>' +
@@ -1154,7 +1166,7 @@ footer a{color:var(--ink-2)}
     document.getElementById('slipSentence').textContent = (r.legs ? 'All ' + r.legs.length + ' legs must win. That happens about ' + (r.p >= 0.01 ? 'once in ' + Math.round(1 / r.p) : 'less than once in 100') + ' tries.' :
       'A ' + pct(r.p) + ' outcome loses about ' + (r.p >= 0.5 ? 'one time in ' + (1/(1-r.p)).toFixed(0) : (100-Math.round(r.p*100)) + ' times in 100') + '.') +
       ' ' + r.where + ' prices this live when you get there; the figure above was seen at ' + t + '. Nothing is placed until you confirm and pay inside ' + r.where + '.';
-    slipText.textContent = r.where + ' · ' + legs.join(' | ') + ' · seen ' + r.best.toFixed(2) + (r.legs ? ' combined' : '') + ' at ' + t + ' · sending KES ' + D;
+    slipText.textContent = r.where + '\n' + legs.join('\n') + '\n' + (r.legs ? 'Combined ' + r.best.toFixed(2) + ' · ' : '') + 'Stake KES ' + fmt(c.S) + ' (KES ' + D + ' sent, 5% excise) · prices seen ' + t;
     var rc = document.getElementById('receipt'); rc.hidden = true; rc.textContent = '';
     slip.hidden = false; slip.scrollIntoView({behavior:'smooth', block:'nearest'});
   }

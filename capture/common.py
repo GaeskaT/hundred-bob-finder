@@ -39,12 +39,14 @@ class Observation:
     away: str
     kickoff_utc: str       # ISO 8601, UTC
     market: str            # "1X2"
-    outcome: str           # "1" | "X" | "2"
+    outcome: str           # "1" | "X" | "2" | "Over" | "Under"
     price: float
     source_url: str
     observed_at: str       # ISO 8601, UTC
     archive: str           # relative path of the archived raw response
     collector: str = COLLECTOR
+    market_name: str = ""  # the market as the operator names it ("1X2", "TOTAL", "Over/Under")
+    label: str = ""        # the outcome as the operator labels it ("1", "Home", "OVER 2.5")
 
     def valid(self) -> bool:
         return all([self.operator, self.home, self.away, self.kickoff_utc, self.market,

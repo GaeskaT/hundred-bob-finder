@@ -61,7 +61,11 @@ def main() -> int:
                 "fx": f"{f['home']} v {f['away']} · {local.strftime('%a %H:%M')}",
                 "home": f["home"], "away": f["away"], "kickoff_utc": f["kickoff_utc"],
                 "sport": "Football", "league": f["league"], "country": f["country"], "mk": mk,
-                "out": labels,
+                "out": labels, "keys": keys,
+                "labels": {op: (f.get("labels", {}).get(op) or {}).get(mk) for op in operators
+                           if mk in (f["books"].get(op) or {})},
+                "mknames": {op: (f.get("mknames", {}).get(op) or {}).get(mk) for op in operators
+                            if mk in (f["books"].get(op) or {})},
                 "odds": [[f["books"][op][mk][k] for k in keys] if mk in (f["books"].get(op) or {}) else None
                          for op in operators],
                 "names": {op: f["names"][op] for op in f["names"]},

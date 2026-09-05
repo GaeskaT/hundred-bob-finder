@@ -28,6 +28,16 @@ and the page marks it thin until a third source is found. The board carries one 
 and market; the matcher joins per market, so a fixture can be matched on 1X2 by three operators
 and on totals by two.
 
+## Operator wording
+
+Every board entry also keeps, per operator, the words that operator uses so the hand-off slip can be
+typed or pasted into that site verbatim: its spelling of both teams (`names`), its name for the
+market (`mknames`: Betika "1X2" and "TOTAL", SportyBet "1X2" and "Over/Under", Odibets "1X2") and
+its label for each outcome (`labels`, keyed by the neutral `keys`: Betika "1"/"X"/"2" and
+"OVER 2.5"/"UNDER 2.5", SportyBet "Home"/"Draw"/"Away" and "Over 2.5"/"Under 2.5"). They are read
+from the same responses as the prices, never rewritten; when an operator's wording is absent the
+page falls back to the neutral labels.
+
 ## Conduct
 
 - Public feeds only. No login, no session cookie, no page automation, no bettor credentials.

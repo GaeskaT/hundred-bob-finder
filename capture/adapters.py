@@ -68,7 +68,7 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
                           away=str(m["away_team"]), kickoff_utc=kick, market="1X2",
                           source_url=url, observed_at=stamp.isoformat(timespec="seconds"), archive=arch)
             for key, field in (("1", "home_odd"), ("X", "neutral_odd"), ("2", "away_odd")):
-                o = Observation(outcome=key, price=_num(m.get(field)), **common)
+                o = Observation(outcome=key, price=_num(m.get(field)), market_name="1X2", label=key, **common)
                 if o.valid():
                     out.append(o)
             for blk in m.get("odds") or []:
@@ -81,7 +81,8 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
                     key = "Over" if disp.startswith("OVER") else ("Under" if disp.startswith("UNDER") else "")
                     if not key:
                         continue
-                    o = Observation(outcome=key, price=_num(x.get("odd_value")), **dict(common, market="O/U 2.5"))
+                    o = Observation(outcome=key, price=_num(x.get("odd_value")), market_name=str(blk.get("name") or "TOTAL"),
+                                    label=str(x.get("display") or ""), **dict(common, market="O/U 2.5"))
                     if o.valid():
                         out.append(o)
         # the feed is sorted by start time: once a whole page lies beyond the window, stop
@@ -132,7 +133,8 @@ def sportybet(client: PoliteClient, stamp: datetime) -> list[Observation]:
                 key = {"1": "1", "2": "X", "3": "2"}.get(str(oc.get("id")))
                 if not key or not oc.get("isActive", 1):
                     continue
-                o = Observation(outcome=key, price=_num(oc.get("odds")), **common)
+                o = Observation(outcome=key, price=_num(oc.get("odds")), market_name=str(mk.get("name") or "1X2"),
+                                label=str(oc.get("desc") or key), **common)
                 if o.valid():
                     out.append(o)
             ou = next((m for m in (e.get("markets") or []) if str(m.get("id")) == "18"
@@ -142,7 +144,8 @@ def sportybet(client: PoliteClient, stamp: datetime) -> list[Observation]:
                 key = "Over" if desc.startswith("over") else ("Under" if desc.startswith("under") else "")
                 if not key or not oc.get("isActive", 1):
                     continue
-                o = Observation(outcome=key, price=_num(oc.get("odds")), **dict(common, market="O/U 2.5"))
+                o = Observation(outcome=key, price=_num(oc.get("odds")), market_name=str(ou.get("name") or "Over/Under"),
+                                label=str(oc.get("desc") or key), **dict(common, market="O/U 2.5"))
                 if o.valid():
                     out.append(o)
         if seen_total and got >= int(seen_total):
@@ -230,7 +233,8 @@ def _odibets_rows(rows, url, arch, stamp, seen, out):
                 key = str(oc.get("outcome_key") or "")
                 if key not in ("1", "X", "2") or not oc.get("active", 1):
                     continue
-                o = Observation(outcome=key, price=_num(oc.get("odd_value")), **common)
+                o = Observation(outcome=key, price=_num(oc.get("odd_value")), market_name=str(mk.get("odd_type") or "1X2"),
+                                label=key, **common)
                 if o.valid():
                     out.append(o)
 
