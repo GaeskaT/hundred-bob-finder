@@ -1009,8 +1009,10 @@ footer a{color:var(--ink-2)}
     var rows = ROWS.filter(function(r){
       if (r.p < floor || !leagueOn(r.league)) return false;
       if (!q.length) return true;
-      var hay = (r.fx + ' ' + r.out + ' ' + r.league + ' ' + r.mk).toLowerCase();
-      return q.every(function(w){ return hay.indexOf(w) >= 0; });
+      // each typed word must begin a word in the text, so "over" finds Over 1.5 but
+      // not Raith Rovers, while "man" still finds Man City and Manchester United
+      var hay = ' ' + (r.fx + ' ' + r.out + ' ' + r.league + ' ' + r.mk).toLowerCase().replace(/[^a-z0-9.]+/g, ' ') + ' ';
+      return q.every(function(w){ return hay.indexOf(' ' + w.replace(/[^a-z0-9.]+/g, ' ').trim()) >= 0; });
     }).map(function(r){ r.c = calc(r, D); return r; });
     document.getElementById('fxqOut').textContent = q.length ? rows.length + ' match' + (rows.length === 1 ? '' : 'es') : '';
     document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
