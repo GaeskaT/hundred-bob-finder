@@ -1257,13 +1257,13 @@ footer a{color:var(--ink-2)}
     var legs = Object.keys(byFx).map(function(k){ return byFx[k]; }).sort(function(a, b){ return b.p - a.p; });
     if (!legs.length) return {floor: floor, legs: [], per: [], best: null};
     var per = BOOKS.map(function(bk, b){
-      var mine = legs.filter(function(r){ return r.all[b] != null; }).slice(0, MULTI_MAX);
+      var priced = legs.filter(function(r){ return r.all[b] != null; }); var mine = priced.slice(0, MULTI_MAX);
       if (mine.length < 2) return null;
       var idx = mine.map(function(r){ return ROWS.indexOf(r); });
       var odds = mine.reduce(function(o, r){ return o * r.all[b]; }, 1), p = mine.reduce(function(q, r){ return q * r.p; }, 1);
       var n = Math.min.apply(null, mine.map(function(r){ return r.n; }));
       return {out:'Floor multi, ' + mine.length + ' legs at ' + pct(floor) + '+', fx:mine.map(function(r){ return r.fx.split(' · ')[0]; }).join(', '),
-              where:bk, best:odds, p:p, pmin:p, pmax:p, n:n, legs:idx, dropped: legs.length - mine.length, all:[]};
+              where:bk, best:odds, p:p, pmin:p, pmax:p, n:n, legs:idx, unpriced: legs.length - priced.length, capped: priced.length - mine.length, all:[]};
     });
     // best: most legs first (the slip the floor asked for), then the higher combined price
     var best = per.filter(Boolean).sort(function(a, b){ return b.legs.length - a.legs.length || b.best - a.best; })[0] || null;
@@ -1282,11 +1282,11 @@ footer a{color:var(--ink-2)}
     var a = FLOOR_BET, fair = 1 / a.p, c = calc(a, D);
     floorBooks.innerHTML = '<table class="books"><thead><tr><th>Book</th><th class="n">Legs</th><th class="n">Combined</th><th class="n">Pays to M-Pesa</th><th class="n">Profit</th></tr></thead><tbody>' +
       BOOKS.map(function(bk, b){ var m = FM.per[b]; if (!m) return '<tr><td>' + bk + '</td><td class="n" colspan="4" style="text-align:left;color:var(--ink-3)">prices fewer than two of these legs</td></tr>';
-        var cc = calc(m, D); return '<tr' + (bk === a.where ? ' class="best"' : '') + '><td>' + bk + (bk === a.where ? ' · best' : '') + '</td><td class="n">' + m.legs.length + (m.dropped ? ' <span style="color:var(--ink-3)">(' + m.dropped + ' not priced)</span>' : '') + '</td><td class="n">' + m.best.toFixed(2) + '</td><td class="n">' + fmt(cc.cash) + '</td><td class="n' + (cc.profit < 0 ? ' neg' : ' pos') + '">' + (cc.profit >= 0 ? '+' : '−') + fmt(Math.abs(cc.profit)) + '</td></tr>'; }).join('') +
+        var cc = calc(m, D); return '<tr' + (bk === a.where ? ' class="best"' : '') + '><td>' + bk + (bk === a.where ? ' · best' : '') + '</td><td class="n">' + m.legs.length + (m.unpriced || m.capped ? ' <span style="color:var(--ink-3)">(' + [m.capped ? 'capped at ' + MULTI_MAX : '', m.unpriced ? m.unpriced + ' not priced' : ''].filter(Boolean).join(', ') + ')</span>' : '') + '</td><td class="n">' + m.best.toFixed(2) + '</td><td class="n">' + fmt(cc.cash) + '</td><td class="n' + (cc.profit < 0 ? ' neg' : ' pos') + '">' + (cc.profit >= 0 ? '+' : '−') + fmt(Math.abs(cc.profit)) + '</td></tr>'; }).join('') +
       '</tbody></table>';
     document.getElementById('floorHead').textContent = a.legs.length + ' legs at ' + a.where;
     floorKv.innerHTML =
-      '<span>Legs, all at or above ' + pct(FM.floor) + '</span><b>' + a.legs.length + (a.dropped ? ' of ' + FM.legs.length + ' (rest not priced there)' : (FM.legs.length > MULTI_MAX ? ' of ' + FM.legs.length + ' (capped at ' + MULTI_MAX + ')' : '')) + '</b>' +
+      '<span>Legs, all at or above ' + pct(FM.floor) + '</span><b>' + a.legs.length + (a.unpriced || a.capped ? ' of ' + FM.legs.length + ' (' + [a.capped ? 'the ' + MULTI_MAX + ' likeliest; ' + a.capped + ' more qualify' : '', a.unpriced ? a.unpriced + ' not priced at ' + a.where : ''].filter(Boolean).join('; ') + ')' : '') + '</b>' +
       '<span>Combined odds at ' + a.where + '</span><b>' + a.best.toFixed(2) + '</b>' +
       '<span>All legs win about</span><b>' + (a.p * 100).toFixed(a.p < 0.1 ? 2 : 1) + '% of the time</b>' +
       '<span>Fair combined odds</span><b>' + fair.toFixed(2) + '</b>' +
