@@ -895,7 +895,8 @@ footer a{color:var(--ink-2)}
         </div>
       </div>
       <p class="slip-sentence" id="floorNote"></p>
-      <div class="place"><button type="button" class="btn" id="floorPlace" disabled>Take this to the operator</button><button type="button" class="btn ghost" id="floorLoad" disabled>Load into the builder</button><span class="finder-note" style="margin:0">Legs at their combined price at that operator; the hand-off card lists every leg.</span></div>
+      <p class="finder-note" id="floorReceipt" hidden></p>
+      <div class="place"><button type="button" class="btn" id="floorPlace" disabled>Take this to the operator</button><button type="button" class="btn ghost" id="floorLoad" disabled>Load into the builder</button><button type="button" class="btn ghost" id="floorShare" disabled>Share</button><span class="finder-note" style="margin:0">Legs at their combined price at that operator; the hand-off card lists every leg.</span></div>
     </div>
 
     <h3>§ 10.4 — The builder, in the prototype</h3>
@@ -1054,6 +1055,7 @@ footer a{color:var(--ink-2)}
     savePicked(); renderChips(); render();
   });
   var dep = document.getElementById('dep'), minp = document.getElementById('minp');
+  try { var qf = new URLSearchParams(location.search).get('floor'); if (qf !== null && !isNaN(+qf) && +qf >= 0 && +qf <= 90) minp.value = Math.round(+qf / 5) * 5; } catch (e) {}
   var depOut = document.getElementById('depOut'), minpOut = document.getElementById('minpOut');
   var tbody = document.getElementById('rows'); var sortKey = 'p'; var selected = null;
   function fmt(x){ return x.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
@@ -1165,6 +1167,17 @@ footer a{color:var(--ink-2)}
   // Hand-off card: what the phone carries across to the operator. No money, no account.
   var slip = document.getElementById('slip'), slipKv = document.getElementById('slipKv'), slipText = document.getElementById('slipText');
   var slipBet = null, slipLinksText = '';
+  // One leg in the operator's own words: its team spellings, market name and outcome
+  // label, the price there, and the Nairobi kick-off. Used by the hand-off card and by
+  // the floor multi's share text.
+  function legLine(row, op){
+    var bi = BOOKS.indexOf(op);
+    var nm = row.names && row.names[op]; var teams = nm ? nm[0] + ' v ' + nm[1] : row.fx.split(' · ')[0];
+    var mkn = (row.mknames && row.mknames[op]) || row.mk;
+    var lab = (row.labels && row.labels[op] && row.key && row.labels[op][row.key]) || row.out;
+    var when = row.kick ? new Intl.DateTimeFormat('en-GB', {timeZone: 'Africa/Nairobi', weekday: 'short', hour: '2-digit', minute: '2-digit'}).format(new Date(row.kick)) : row.fx.split(' · ')[1] || '';
+    return teams + ' · ' + mkn + ' · ' + lab + ' @ ' + row.all[bi].toFixed(2) + (when ? ' · ' + when : '');
+  }
   // The operator's own fixture page, wrapped on Android as an intent that names the operator's
   // app (opens the app at the fixture when installed, the site otherwise). Package ids: Betika
   // from its Play developer page; SportyBet and Odibets from their APK listings.
@@ -1183,14 +1196,7 @@ footer a{color:var(--ink-2)}
     // Each leg in the OPERATOR's own words: its spelling of the teams, its market name and
     // its outcome label ("1" at Betika, "Home" at SportyBet, "OVER 2.5" vs "Over 2.5"),
     // so the slip can be typed or pasted into that site exactly as it appears there.
-    var bi = BOOKS.indexOf(r.where);
-    var slipLine = function(row){
-      var nm = row.names && row.names[r.where]; var teams = nm ? nm[0] + ' v ' + nm[1] : row.fx.split(' · ')[0];
-      var mkn = (row.mknames && row.mknames[r.where]) || row.mk;
-      var lab = (row.labels && row.labels[r.where] && row.key && row.labels[r.where][row.key]) || row.out;
-      var when = row.kick ? new Intl.DateTimeFormat('en-GB', {timeZone: 'Africa/Nairobi', weekday: 'short', hour: '2-digit', minute: '2-digit'}).format(new Date(row.kick)) : row.fx.split(' · ')[1] || '';
-      return teams + ' · ' + mkn + ' · ' + lab + ' @ ' + row.all[bi].toFixed(2) + (when ? ' · ' + when : '');
-    };
+    var slipLine = function(row){ return legLine(row, r.where); };
     var legs = r.legs ? r.legs.map(function(i){ return slipLine(ROWS[i]); }) : [slipLine(r)];
     slipKv.innerHTML =
       '<span>Operator</span><b>' + r.where + '</b>' +
@@ -1270,15 +1276,15 @@ footer a{color:var(--ink-2)}
     if (best) best.all = BOOKS.map(function(bk, b){ return per[b] && per[b].legs.length === best.legs.length ? per[b].best : null; });
     return {floor: floor, legs: legs, per: per, best: best};
   }
-  var floorBooks = document.getElementById('floorBooks'), floorKv = document.getElementById('floorKv'), floorNote = document.getElementById('floorNote'), floorPlace = document.getElementById('floorPlace'), floorLoad = document.getElementById('floorLoad'), floorChips = document.getElementById('floorChips');
+  var floorBooks = document.getElementById('floorBooks'), floorKv = document.getElementById('floorKv'), floorNote = document.getElementById('floorNote'), floorPlace = document.getElementById('floorPlace'), floorLoad = document.getElementById('floorLoad'), floorShare = document.getElementById('floorShare'), floorReceipt = document.getElementById('floorReceipt'), floorChips = document.getElementById('floorChips');
   var FLOOR_BET = null;
   floorChips.innerHTML = '<button type="button" data-floor="0">Off</button>' + FLOOR_PRESETS.map(function(v){ return '<button type="button" data-floor="' + v + '">' + v + '%+</button>'; }).join('');
   floorChips.addEventListener('click', function(e){ var b = e.target.closest('button[data-floor]'); if (!b) return; minp.value = b.dataset.floor; render(); });
   function renderFloor(FM, D){
     var v = +minp.value; floorChips.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-pressed', +b.dataset.floor === v ? 'true' : 'false'); });
     FLOOR_BET = FM && FM.best;
-    if (!FM){ floorBooks.innerHTML = ''; floorKv.innerHTML = ''; floorNote.textContent = 'Set a minimum probability to build the multi. Every outcome at or above it becomes a leg.'; floorPlace.disabled = true; floorLoad.disabled = true; floorPlace.textContent = 'Take this to the operator'; document.getElementById('floorHead').textContent = 'Best of them'; return; }
-    if (!FLOOR_BET){ floorBooks.innerHTML = ''; floorKv.innerHTML = ''; floorNote.textContent = FM.legs.length < 2 ? 'Only ' + FM.legs.length + ' fixture' + (FM.legs.length === 1 ? '' : 's') + ' at ' + pct(FM.floor) + ' or above inside the current filters; a multi needs two.' : 'No single operator prices two of these legs.'; floorPlace.disabled = true; floorLoad.disabled = true; floorPlace.textContent = 'Take this to the operator'; document.getElementById('floorHead').textContent = 'Best of them'; return; }
+    if (!FM){ floorBooks.innerHTML = ''; floorKv.innerHTML = ''; floorNote.textContent = 'Set a minimum probability to build the multi. Every outcome at or above it becomes a leg.'; floorPlace.disabled = true; floorLoad.disabled = true; floorShare.disabled = true; floorPlace.textContent = 'Take this to the operator'; document.getElementById('floorHead').textContent = 'Best of them'; return; }
+    if (!FLOOR_BET){ floorBooks.innerHTML = ''; floorKv.innerHTML = ''; floorNote.textContent = FM.legs.length < 2 ? 'Only ' + FM.legs.length + ' fixture' + (FM.legs.length === 1 ? '' : 's') + ' at ' + pct(FM.floor) + ' or above inside the current filters; a multi needs two.' : 'No single operator prices two of these legs.'; floorPlace.disabled = true; floorLoad.disabled = true; floorShare.disabled = true; floorPlace.textContent = 'Take this to the operator'; document.getElementById('floorHead').textContent = 'Best of them'; return; }
     var a = FLOOR_BET, fair = 1 / a.p, c = calc(a, D);
     floorBooks.innerHTML = '<table class="books"><thead><tr><th>Book</th><th class="n">Legs</th><th class="n">Combined</th><th class="n">Pays to M-Pesa</th><th class="n">Profit</th></tr></thead><tbody>' +
       BOOKS.map(function(bk, b){ var m = FM.per[b]; if (!m) return '<tr><td>' + bk + '</td><td class="n" colspan="4" style="text-align:left;color:var(--ink-3)">prices fewer than two of these legs</td></tr>';
@@ -1297,9 +1303,30 @@ footer a{color:var(--ink-2)}
       '<span>Profit if it wins</span><b style="color:' + (c.profit < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.profit >= 0 ? '+' : '−') + fmt(Math.abs(c.profit)) + '</b>' +
       '<span>EV of KES 100</span><b style="color:' + (c.ev < 0 ? 'var(--crit)' : 'var(--ok)') + '">' + (c.ev >= 0 ? '+' : '−') + Math.abs(c.ev).toFixed(1) + '</b>';
     floorNote.textContent = 'The ' + a.legs.length + ' highlighted rows in § 5 are the legs. All must win; that happens about ' + (a.p >= 0.01 ? 'once in ' + Math.round(1 / a.p) + ' tries' : 'less than once in 100 tries') + ', so KES ' + fmt(D) + ' becomes KES ' + fmt(c.cash) + ' about that often and is lost otherwise.';
-    floorPlace.disabled = false; floorPlace.textContent = 'Take this to ' + a.where; floorLoad.disabled = false;
+    floorPlace.disabled = false; floorPlace.textContent = 'Take this to ' + a.where; floorLoad.disabled = false; floorShare.disabled = false;
   }
   floorPlace.addEventListener('click', function(){ if (FLOOR_BET){ selected = FLOOR_BET.legs[0]; openSlip(FLOOR_BET); } });
+  function floorShareText(){
+    var a = FLOOR_BET; if (!a) return '';
+    var D = +dep.value, c = calc(a, D), floor = Math.round(+minp.value);
+    var link = location.origin + location.pathname + '?floor=' + floor;
+    return ['Floor multi · every pick at ' + floor + '%+ · ' + a.legs.length + ' legs at ' + a.where]
+      .concat(a.legs.map(function(i, k){ return (k + 1) + '. ' + legLine(ROWS[i], a.where); }))
+      .concat(['Combined ' + a.best.toFixed(2) + ' · KES ' + fmt(D) + ' sent becomes KES ' + fmt(c.cash) + ' to M-Pesa if every leg wins (about ' + (a.p >= 0.01 ? '1 in ' + Math.round(1 / a.p) : 'less than 1 in 100') + ')',
+               'Prices seen ' + seenAt() + ' · ' + link]).join('\n');
+  }
+  floorShare.addEventListener('click', function(){
+    var text = floorShareText(); if (!text) return; floorReceipt.hidden = false;
+    var a = FLOOR_BET, title = 'Floor multi · ' + a.legs.length + ' legs at ' + a.where;
+    if (navigator.share){
+      navigator.share({title: title, text: text}).then(function(){ floorReceipt.textContent = 'Shared.'; })
+        .catch(function(e){ if (e && e.name === 'AbortError'){ floorReceipt.textContent = 'Share cancelled.'; return; } copyFloor(text); });
+    } else copyFloor(text);
+  });
+  function copyFloor(text){
+    try { navigator.clipboard.writeText(text); floorReceipt.textContent = 'Multi copied: ' + FLOOR_BET.legs.length + ' legs, combined ' + FLOOR_BET.best.toFixed(2) + ', with a link that reopens this floor. Paste it anywhere.'; }
+    catch (e) { floorReceipt.textContent = 'Could not reach the clipboard; the legs are highlighted in § 5 and the numbers are above.'; }
+  }
   floorLoad.addEventListener('click', function(){ if (!FLOOR_BET) return; ACCA.length = 0; FLOOR_BET.legs.forEach(function(i){ ACCA.push(i); }); accaNote.textContent = ''; render(); renderAcca(); document.getElementById('accaPanel').scrollIntoView({behavior:'smooth', block:'nearest'}); });
 
   // Accumulator builder: legs from the finder, one per fixture, priced per book as a product.
