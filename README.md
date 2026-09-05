@@ -21,6 +21,19 @@ and a deep link that opens the operator's app (or site) at that fixture.
   the pick of the board, the hand-off card and the accumulator builder. When
   `data/board.json` is present beside it, the finder shows the live board and its capture time;
   otherwise it shows an illustrative board of real clubs with invented prices, and says so.
+  - Hand-off card: the slip in the operator's own wording, an Open button that is the operator's
+    fixture page (an Android intent naming its app, with the site as fallback), one link per leg
+    for an accumulator, Copy slip, and Copy links (every operator's page for the fixture, plain
+    https, ready to share).
+  - Floor multi: pick a minimum probability (45%, 60%, 70%...) and every outcome at or above it,
+    one per fixture, is highlighted and combined into one multi-bet per operator with combined
+    odds, what it pays to M-Pesa if every leg wins, and the chance of that; capped at the 20
+    likeliest legs. Take it to the operator, load it into the builder, or Share it (phone share
+    sheet, or clipboard) with a link that reopens the same floor.
+  - Independent opinions: operators carrying identical prices on a fixture count as one source in
+    the consensus and in the pick's three-source rule; counts read "n=3 · 2 independent". A pick
+    whose edge exists at one operator only is labelled "one operator disagrees", with the next-best
+    price and its expected value beside it, instead of "value found".
 - `capture/` - the capture pipeline: one adapter per operator, a polite HTTP client (identified
   user agent, one request per second per host, robots honoured), the fixture matcher, and the
   board writer. See [CAPTURE.md](CAPTURE.md) for operators, conduct, evidence fields and matching.
