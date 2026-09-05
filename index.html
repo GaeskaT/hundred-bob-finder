@@ -937,6 +937,7 @@ footer a{color:var(--ink-2)}
   BOARD = board; BOOKS = books; ROWS.length = 0; LEAGUES.length = 0;
   BOARD.forEach(function(g){
     var quoting = g.odds.map(function(bk, b){ return bk ? b : -1; }).filter(function(b){ return b >= 0; });
+    if (!quoting.length) return;   // no chosen operator prices this fixture: it is not on this board
     var devig = {};
     quoting.forEach(function(b){ var q = g.odds[b].map(function(o){return 1/o}); var s = q.reduce(function(a,c){return a+c},0); devig[b] = q.map(function(x){return x/s}); });
     g.out.forEach(function(name, i){
@@ -952,6 +953,7 @@ footer a{color:var(--ink-2)}
   });
   // Leagues on the board, with how many books price each (what the consensus can lean on).
   BOARD.forEach(function(g){
+    if (!g.odds.some(Boolean)) return;   // same rule for the league counts
     var L = LEAGUES.filter(function(l){ return l.league === g.league; })[0];
     if (!L){ L = {sport:g.sport, league:g.league, books:0, fixtures:0}; LEAGUES.push(L); }
     L.fixtures += 1; L.books = Math.max(L.books, g.odds.filter(Boolean).length);
