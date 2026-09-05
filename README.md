@@ -14,7 +14,7 @@ bettor to the operator's own app or site with the slip prepared.
 
 - `index.html` - the design (pipeline, probability engine, returns engine, hand-off, accumulator
   builder, build sequence) and the finder, which runs entirely in the browser: operator filter
-  (the board is recomputed from the operators left on), league filter,
+  (the board is recomputed from the operators left on), market filter (1X2 or Over/Under 2.5), league filter,
   kick-off day filter (Today / Tomorrow / the day after, Nairobi time), fixture search (every word typed must appear in the fixture, outcome or league), three sorts,
   the pick of the board, the hand-off card and the accumulator builder. When
   `data/board.json` is present beside it, the finder shows the live board and its capture time;

@@ -44,24 +44,29 @@ def main() -> int:
 
     fixtures, quarantine = join(observations)
     operators = [n for n, s in status.items() if s.get("ok")]
-    with_consensus = [f for f in fixtures if len(f["books"]) >= MIN_BOOKS_FOR_CONSENSUS]
+    with_consensus = [f for f in fixtures if sum(1 for b in f["books"].values() if "1X2" in b) >= MIN_BOOKS_FOR_CONSENSUS]
     print(f"joined: {len(fixtures)} fixtures, {len(with_consensus)} priced by >= {MIN_BOOKS_FOR_CONSENSUS} operators, "
           f"{len(quarantine)} in quarantine")
 
     # ---- the board the page loads (same shape as the page's illustrative BOARD) ------
     board_fixtures = []
+    MARKETS = {"1X2": (["Home win", "Draw", "Away win"], ["1", "X", "2"]),
+               "O/U 2.5": (["Over 2.5", "Under 2.5"], ["Over", "Under"])}
     for f in sorted(fixtures, key=lambda f: (-len(f["books"]), f["kick"]))[:MAX_FIXTURES]:
         local = f["kick"].astimezone(EAT)
-        board_fixtures.append({
-            "fx": f"{f['home']} v {f['away']} · {local.strftime('%a %H:%M')}",
-            "home": f["home"], "away": f["away"], "kickoff_utc": f["kickoff_utc"],
-            "sport": "Football", "league": f["league"], "country": f["country"], "mk": "1X2",
-            "out": ["Home win", "Draw", "Away win"],
-            "odds": [[f["books"][op]["1"], f["books"][op]["X"], f["books"][op]["2"]] if op in f["books"] else None
-                     for op in operators],
-            "names": {op: f["names"][op] for op in f["names"]},
-            "archives": {op: f["archives"][op] for op in f["archives"]},
-        })
+        present = {mk for b in f["books"].values() for mk in b}
+        for mk in [m for m in MARKETS if m in present]:
+            labels, keys = MARKETS[mk]
+            board_fixtures.append({
+                "fx": f"{f['home']} v {f['away']} · {local.strftime('%a %H:%M')}",
+                "home": f["home"], "away": f["away"], "kickoff_utc": f["kickoff_utc"],
+                "sport": "Football", "league": f["league"], "country": f["country"], "mk": mk,
+                "out": labels,
+                "odds": [[f["books"][op][mk][k] for k in keys] if mk in (f["books"].get(op) or {}) else None
+                         for op in operators],
+                "names": {op: f["names"][op] for op in f["names"]},
+                "archives": {op: f["archives"][op] for op in f["archives"]},
+            })
     board_fixtures.sort(key=lambda b: b["kickoff_utc"])
     board = {
         "captured_at": stamp.isoformat(timespec="seconds"),
@@ -71,6 +76,7 @@ def main() -> int:
         "window_hours": 48,
         "fixtures": board_fixtures,
         "counts": {"observations": len(observations), "fixtures": len(fixtures),
+                   "markets": sorted({e["mk"] for e in board_fixtures}),
                    "with_consensus": len(with_consensus), "quarantine": len(quarantine)},
         "collector": "hundred-bob-finder capture v0.1",
         "licence": "CC BY 4.0 for the observations; prices are the operators' public offers at capture time",

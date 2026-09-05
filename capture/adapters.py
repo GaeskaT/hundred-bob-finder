@@ -24,8 +24,10 @@ def _num(x) -> float:
 
 # ---------------------------------------------------------------- Betika ----------
 def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
+    # sub_type_id=1,18: the 1X2 and the TOTAL market arrive together in one request;
+    # the totals carry their line as special_bet_value "total=2.5".
     base = ("https://api.betika.com/v1/uo/matches?page={page}&limit=100&tab=upcoming"
-            "&sub_type_id=1&sport_id=14&sort_id=2&period_id=-2&esports=false")
+            "&sub_type_id=1,18&sport_id=14&sort_id=2&period_id=-2&esports=false")
     out: list[Observation] = []
     for page in range(1, MAX_PAGES + 1):
         url = base.format(page=page)
@@ -69,6 +71,19 @@ def betika(client: PoliteClient, stamp: datetime) -> list[Observation]:
                 o = Observation(outcome=key, price=_num(m.get(field)), **common)
                 if o.valid():
                     out.append(o)
+            for blk in m.get("odds") or []:
+                if str(blk.get("sub_type_id")) != "18":
+                    continue
+                for x in blk.get("odds") or []:
+                    if "total=2.5" not in str(x.get("special_bet_value") or ""):
+                        continue
+                    disp = str(x.get("display") or "").upper()
+                    key = "Over" if disp.startswith("OVER") else ("Under" if disp.startswith("UNDER") else "")
+                    if not key:
+                        continue
+                    o = Observation(outcome=key, price=_num(x.get("odd_value")), **dict(common, market="O/U 2.5"))
+                    if o.valid():
+                        out.append(o)
         # the feed is sorted by start time: once a whole page lies beyond the window, stop
         if len(rows) < 100 or beyond == len(rows):
             break
@@ -80,8 +95,10 @@ def sportybet(client: PoliteClient, stamp: datetime) -> list[Observation]:
     # timeline=48 restricts the feed to the next 48 hours (1,479 events instead of
     # 2,012 on 2026-09-04); pageSize above 100 is refused, and pages group by
     # tournament so a page holds a little under 100 events.
+    # marketId=1,18: 1X2 and every Over/Under line in one request; the 2.5 line is
+    # the market whose specifier is "total=2.5".
     base = ("https://www.sportybet.com/api/ke/factsCenter/pcUpcomingEvents?sportId=sr%3Asport%3A1"
-            "&marketId=1&pageSize=100&pageNum={page}&option=1&timeline=48")
+            "&marketId=1%2C18&pageSize=100&pageNum={page}&option=1&timeline=48")
     out: list[Observation] = []
     seen_total = None
     got = 0
@@ -116,6 +133,16 @@ def sportybet(client: PoliteClient, stamp: datetime) -> list[Observation]:
                 if not key or not oc.get("isActive", 1):
                     continue
                 o = Observation(outcome=key, price=_num(oc.get("odds")), **common)
+                if o.valid():
+                    out.append(o)
+            ou = next((m for m in (e.get("markets") or []) if str(m.get("id")) == "18"
+                       and str(m.get("specifier") or "") == "total=2.5"), None)
+            for oc in (ou.get("outcomes") if ou else None) or []:
+                desc = str(oc.get("desc") or "").lower()
+                key = "Over" if desc.startswith("over") else ("Under" if desc.startswith("under") else "")
+                if not key or not oc.get("isActive", 1):
+                    continue
+                o = Observation(outcome=key, price=_num(oc.get("odds")), **dict(common, market="O/U 2.5"))
                 if o.valid():
                     out.append(o)
         if seen_total and got >= int(seen_total):

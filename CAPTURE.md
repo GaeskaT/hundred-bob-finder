@@ -17,6 +17,17 @@ Not captured, and why:
 - **Betway Kenya** returned HTTP 523 (origin unreachable) at discovery time.
 - **Mozzart, Shabiki, Pepeta, Bangbet** load their boards through in-page proxy endpoints that were not identified from public requests. Adapters can be added once an endpoint is known; the same conduct rules apply.
 
+## Markets
+
+Two markets per fixture: **1X2** and **Over/Under 2.5 goals**. Betika (`sub_type_id=1,18`, line in
+`special_bet_value`) and SportyBet (`marketId=1,18`, line in the market `specifier`) deliver both in
+the same request as before, so the crawl costs nothing extra. Odibets' list feed carries only the
+0.5 line of its Over/Under whatever specifier is asked for, and no per-match resource answers by
+the obvious names, so Odibets contributes 1X2 only; the 2.5 line therefore rests on two operators
+and the page marks it thin until a third source is found. The board carries one entry per fixture
+and market; the matcher joins per market, so a fixture can be matched on 1X2 by three operators
+and on totals by two.
+
 ## Conduct
 
 - Public feeds only. No login, no session cookie, no page automation, no bettor credentials.

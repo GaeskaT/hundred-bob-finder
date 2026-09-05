@@ -87,17 +87,18 @@ def join(observations: list[Observation]) -> tuple[list[dict], list[dict]]:
     """
     # First collapse each operator's rows into per-fixture price dicts.
     per_op: dict[str, list[dict]] = {}
-    key = lambda o: (o.operator, o.home, o.away, o.kickoff_utc)
+    key = lambda o: (o.operator, o.home, o.away, o.kickoff_utc, o.market)
     for k, grp in groupby(sorted(observations, key=key), key=key):
         rows = list(grp)
         prices = {r.outcome: r.price for r in rows}
-        if not all(x in prices for x in ("1", "X", "2")):
+        need = ("Over", "Under") if rows[0].market.startswith("O/U") else ("1", "X", "2")
+        if not all(x in prices for x in need):
             continue
         r = rows[0]
         per_op.setdefault(r.operator, []).append({
             "operator": r.operator, "home": r.home, "away": r.away, "nh": norm(r.home), "na": norm(r.away),
             "kick": _kick(r), "kickoff_utc": r.kickoff_utc, "country": r.country, "league": r.league,
-            "prices": prices, "archive": r.archive, "source_url": r.source_url,
+            "prices": prices, "market": r.market, "archive": r.archive, "source_url": r.source_url,
         })
     ops = sorted(per_op, key=lambda o: -len(per_op[o]))
     fixtures: list[dict] = []
@@ -106,8 +107,8 @@ def join(observations: list[Observation]) -> tuple[list[dict], list[dict]]:
         for e in per_op[op]:
             best = None
             for f in fixtures:
-                if op in f["books"]:
-                    continue
+                if e["market"] in (f["books"].get(op) or {}):
+                    continue          # this operator already matched this market here
                 dt = abs((f["kick"] - e["kick"]).total_seconds())
                 if dt > 30 * 60:
                     continue
@@ -128,10 +129,10 @@ def join(observations: list[Observation]) -> tuple[list[dict], list[dict]]:
             if best is None:
                 fixtures.append({"home": e["home"], "away": e["away"], "nh": e["nh"], "na": e["na"], "kick": e["kick"],
                                  "kickoff_utc": e["kickoff_utc"], "country": e["country"], "league": e["league"],
-                                 "books": {op: e["prices"]}, "names": {op: (e["home"], e["away"])},
+                                 "books": {op: {e["market"]: e["prices"]}}, "names": {op: (e["home"], e["away"])},
                                  "archives": {op: e["archive"]}, "sources": {op: e["source_url"]}})
             else:
-                best["books"][op] = e["prices"]
+                best["books"].setdefault(op, {})[e["market"]] = e["prices"]
                 best["names"][op] = (e["home"], e["away"])
                 best["archives"][op] = e["archive"]
                 best["sources"][op] = e["source_url"]

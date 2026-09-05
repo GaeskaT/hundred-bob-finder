@@ -525,6 +525,10 @@ footer a{color:var(--ink-2)}
         <p class="finder-note" style="margin:8px 0 0">The live board opens on the leagues every operator prices, because only those carry a full consensus; "All leagues" widens it and the choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
       </div>
 
+      <div class="leagues-ctrl" id="mkCtrl" hidden>
+        <label class="sans">Market <b class="mono" id="mkNote"></b></label>
+        <div class="chips" id="mkChips" role="group" aria-label="Market"></div>
+      </div>
       <div class="leagues-ctrl" id="dayCtrl" hidden>
         <label class="sans">Kick-off day <b class="mono" id="dayNote"></b></label>
         <div class="chips" id="dayChips" role="group" aria-label="Kick-off day"></div>
@@ -1038,7 +1042,7 @@ footer a{color:var(--ink-2)}
     // finds one market of it. Combined with the league filter and the probability floor.
     var q = (document.getElementById('fxq').value || '').toLowerCase().split(/\s+/).filter(Boolean);
     var rows = ROWS.filter(function(r){
-      if (r.p < floor || !leagueOn(r.league) || !dayOn(r.kick)) return false;
+      if (r.p < floor || !leagueOn(r.league) || !dayOn(r.kick) || !mkOn(r.mk)) return false;
       if (!q.length) return true;
       // each typed word must begin a word in the text, so "over" finds Over 1.5 but
       // not Raith Rovers, while "man" still finds Man City and Manchester United
@@ -1276,8 +1280,29 @@ footer a{color:var(--ink-2)}
     DAY = b.dataset.day === '*' ? null : b.dataset.day; renderDays(); render();
   });
 
+  // Market filter: 1X2 or Over/Under 2.5, shown only when the board carries more than
+  // one market. Opens on 1X2, the main market; "Both" shows every row. Not remembered.
+  var MK = null;   // null = not chosen yet -> the main market when several exist
+  function markets(){ var m = {}; ROWS.forEach(function(r){ m[r.mk] = (m[r.mk] || 0) + 1; }); return m; }
+  function mkOn(mk){ var m = markets(); if (Object.keys(m).length < 2) return true; var cur = MK === null ? '1X2' : MK; return cur === '*' || mk === cur; }
+  function renderMarkets(){
+    var box = document.getElementById('mkChips'), ctrl = document.getElementById('mkCtrl'), m = markets(), keys = Object.keys(m);
+    if (keys.length < 2){ ctrl.hidden = true; return; }
+    keys.sort(function(a, b){ return (a === '1X2' ? -1 : b === '1X2' ? 1 : a.localeCompare(b)); });
+    var cur = MK === null ? '1X2' : MK;
+    ctrl.hidden = false;
+    box.innerHTML = keys.map(function(k){ return '<button type="button" class="btn ghost sm" data-mk="' + k + '" aria-pressed="' + (cur === k) + '">' + k + ' <span class="cov">' + m[k] + '</span></button>'; }).join('') +
+      '<button type="button" class="btn ghost sm" data-mk="*" aria-pressed="' + (cur === '*') + '">Both</button>';
+    document.getElementById('mkNote').textContent = cur === '*' ? 'every market' : (cur === '1X2' ? 'match result' : 'total goals, 2.5 line');
+  }
+  document.getElementById('mkChips').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-mk]'); if (!b) return;
+    MK = b.dataset.mk; renderMarkets(); render();
+  });
+
   renderChips();
   renderDays();
+  renderMarkets();
   render();
 
   // The live board. When the capture pipeline has published data/board.json beside this
@@ -1302,7 +1327,7 @@ footer a{color:var(--ink-2)}
       if (!b || !b.fixtures || !b.fixtures.length || !b.operators || b.operators.length < 2) return;
       LIVE = b; setBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null; renderBooks();
       settlePick(true);
-      renderChips(); renderDays(); render(); renderAcca(); showLive(b);
+      renderChips(); renderDays(); renderMarkets(); render(); renderAcca(); showLive(b);
     }).catch(function(){});
   } catch (e) {}
 })();
