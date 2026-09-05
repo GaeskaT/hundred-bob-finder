@@ -1032,7 +1032,9 @@ footer a{color:var(--ink-2)}
   // only those carry a full consensus.
   function settlePick(fresh){
     if (picked){ picked = picked.filter(function(n){ return LEAGUES.some(function(l){ return l.league === n; }); }); if (!picked.length) picked = null; }
-    if (!picked && fresh && !localStorage_has()){ var f = fullLeagues(); if (f.length && f.length < LEAGUES.length) picked = f; }
+    // Default is every league: with the 75% floor the board is short, and the
+    // three-operator leagues alone would hide most of what clears it. The
+    // "Priced by all" chip is still one click away.
   }
   function localStorage_has(){ try { return !!localStorage.getItem('hbf.leagues'); } catch (e) { return false; } }
   var chipBox = document.getElementById('leagueChips');
