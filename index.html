@@ -582,6 +582,7 @@ footer a{color:var(--ink-2)}
         <div class="place">
           <a class="btn" id="confirmBtn" href="#" target="_blank" rel="noopener">Open the operator</a>
           <button type="button" class="btn ghost" id="copyBtn">Copy slip</button>
+          <button type="button" class="btn ghost" id="linksBtn">Copy links</button>
           <button type="button" class="btn ghost" id="cancelBtn">Close</button>
         </div>
         <div id="slipLinks" hidden style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
@@ -1138,7 +1139,7 @@ footer a{color:var(--ink-2)}
   tbody.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ var tr = e.target.closest('tr'); if (!tr) return; e.preventDefault(); selected = +tr.dataset.i; detail(+dep.value); } });
   // Hand-off card: what the phone carries across to the operator. No money, no account.
   var slip = document.getElementById('slip'), slipKv = document.getElementById('slipKv'), slipText = document.getElementById('slipText');
-  var slipBet = null;
+  var slipBet = null, slipLinksText = '';
   // The operator's own fixture page, wrapped on Android as an intent that names the operator's
   // app (opens the app at the fixture when installed, the site otherwise). Package ids: Betika
   // from its Play developer page; SportyBet and Odibets from their APK listings.
@@ -1185,6 +1186,13 @@ footer a{color:var(--ink-2)}
     var cb = document.getElementById('confirmBtn'); var first = r.legs ? ROWS[r.legs[0]] : r; var u0 = first.urls && first.urls[r.where];
     if (u0){ cb.href = deepLink(u0, r.where); cb.textContent = 'Open ' + (r.legs ? 'leg 1' : 'this fixture') + ' at ' + r.where; cb.removeAttribute('aria-disabled'); }
     else { cb.href = '#'; cb.textContent = 'No link from ' + r.where + ' for this fixture'; cb.setAttribute('aria-disabled', 'true'); }
+    // Plain https links for sharing (never the Android intent form): one block per fixture,
+    // the chosen operator first, then every other operator that lists the same fixture.
+    slipLinksText = (r.legs ? r.legs.map(function(i){ return ROWS[i]; }) : [r]).map(function(row){
+      var ops = [r.where].concat(BOOKS.filter(function(b){ return b !== r.where; }));
+      var lines = ops.filter(function(b){ return row.urls && row.urls[b]; }).map(function(b){ return b + ': ' + row.urls[b]; });
+      return row.fx + (lines.length ? '\n' + lines.join('\n') : '\nNo fixture link from any operator');
+    }).join('\n\n');
     var lk = document.getElementById('slipLinks'); lk.innerHTML = '';
     if (r.legs){
       r.legs.forEach(function(i, k){ var row = ROWS[i]; var u = row.urls && row.urls[r.where]; if (!u) return;
@@ -1202,6 +1210,11 @@ footer a{color:var(--ink-2)}
   document.getElementById('copyBtn').addEventListener('click', function(){
     var rc = document.getElementById('receipt'); rc.hidden = false;
     try { navigator.clipboard.writeText(slipText.textContent); rc.textContent = 'Slip copied.'; } catch (e) { rc.textContent = 'Select the slip text above to copy it.'; }
+  });
+  document.getElementById('linksBtn').addEventListener('click', function(){
+    var rc = document.getElementById('receipt'); rc.hidden = false;
+    try { navigator.clipboard.writeText(slipLinksText); rc.textContent = 'Fixture links copied: ' + slipLinksText.split('\n').filter(function(l){ return /^https?:|: https?:/.test(l); }).length + ' link(s), ready to share.'; }
+    catch (e) { rc.textContent = 'Could not reach the clipboard; the links are on the card above.'; }
   });
   document.getElementById('cancelBtn').addEventListener('click', function(){ slip.hidden = true; });
   document.getElementById('placeBtn').addEventListener('click', function(){ openSlip(ROWS[selected]); });
