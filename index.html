@@ -520,6 +520,10 @@ footer a{color:var(--ink-2)}
         <p class="finder-note" style="margin:8px 0 0">The live board opens on the leagues every operator prices, because only those carry a full consensus; "All leagues" widens it and the choice is remembered on this phone only. The fraction beside each league is how many operators price it; a league priced by fewer than three cannot carry a consensus, and its rows show the probability in grey.</p>
       </div>
 
+      <div class="leagues-ctrl" id="dayCtrl" hidden>
+        <label class="sans">Kick-off day <b class="mono" id="dayNote"></b></label>
+        <div class="chips" id="dayChips" role="group" aria-label="Kick-off day"></div>
+      </div>
       <div class="pick" id="pick" aria-live="polite"></div>
       <div class="finder">
         <table class="ft">
@@ -937,7 +941,7 @@ footer a{color:var(--ink-2)}
       var ps = quoting.map(function(b){ return devig[b][i]; });
       var best = -1, where = 0;
       quoting.forEach(function(b){ if (g.odds[b][i] > best){ best = g.odds[b][i]; where = b; } });
-      ROWS.push({fx:g.fx, sport:g.sport, league:g.league, mk:g.mk, out:name, p:median(ps), pmin:Math.min.apply(null,ps), pmax:Math.max.apply(null,ps), n:ps.length,
+      ROWS.push({fx:g.fx, sport:g.sport, league:g.league, mk:g.mk, kick:g.kickoff_utc || null, out:name, p:median(ps), pmin:Math.min.apply(null,ps), pmax:Math.max.apply(null,ps), n:ps.length,
                  best:best, where:BOOKS[where], all:g.odds.map(function(bk){ return bk ? bk[i] : null; })});
     });
   });
@@ -1007,7 +1011,7 @@ footer a{color:var(--ink-2)}
     // finds one market of it. Combined with the league filter and the probability floor.
     var q = (document.getElementById('fxq').value || '').toLowerCase().split(/\s+/).filter(Boolean);
     var rows = ROWS.filter(function(r){
-      if (r.p < floor || !leagueOn(r.league)) return false;
+      if (r.p < floor || !leagueOn(r.league) || !dayOn(r.kick)) return false;
       if (!q.length) return true;
       // each typed word must begin a word in the text, so "over" finds Over 1.5 but
       // not Raith Rovers, while "man" still finds Man City and Manchester United
@@ -1199,7 +1203,39 @@ footer a{color:var(--ink-2)}
   document.getElementById('fxq').addEventListener('search', render);   // the clear (x) button
   document.querySelectorAll('.seg button').forEach(function(b){ b.addEventListener('click', function(){
     sortKey = b.dataset.sort; document.querySelectorAll('.seg button').forEach(function(x){ x.setAttribute('aria-pressed', x===b ? 'true':'false'); }); render(); }); });
+  // Kick-off day filter. Days are Nairobi days; the board's window is 48 hours, so at
+  // most three chips: Today, Tomorrow, and the weekday after. Shown only when the
+  // board carries real kick-off times (the illustrative board does not). Not
+  // remembered between visits: a day filter should not stick.
+  var DAY = null;   // null = every day; otherwise a YYYY-MM-DD in Nairobi time
+  var _dayFmt = new Intl.DateTimeFormat('en-CA', {timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit'});
+  var _wdFmt = new Intl.DateTimeFormat('en-GB', {timeZone: 'Africa/Nairobi', weekday: 'long'});
+  function dayKey(iso){ try { return iso ? _dayFmt.format(new Date(iso)) : null; } catch (e) { return null; } }
+  function dayOn(iso){ if (!DAY) return true; var k = dayKey(iso); return !k || k === DAY; }
+  function dayLabel(key){
+    var today = dayKey(new Date().toISOString()); var tomorrow = dayKey(new Date(Date.now() + 86400000).toISOString());
+    if (key === today) return 'Today'; if (key === tomorrow) return 'Tomorrow';
+    return _wdFmt.format(new Date(key + 'T12:00:00Z'));
+  }
+  function renderDays(){
+    var box = document.getElementById('dayChips'), ctrl = document.getElementById('dayCtrl');
+    var counts = {}, fixtures = {};
+    ROWS.forEach(function(r){ var k = dayKey(r.kick); if (!k) return; counts[k] = (counts[k] || 0) + 1; fixtures[k] = fixtures[k] || {}; fixtures[k][r.fx] = 1; });
+    var keys = Object.keys(counts).sort();
+    if (!keys.length){ ctrl.hidden = true; DAY = null; return; }
+    if (DAY && keys.indexOf(DAY) < 0) DAY = null;
+    ctrl.hidden = false;
+    box.innerHTML = '<button type="button" class="btn ghost sm" data-day="*" aria-pressed="' + (!DAY) + '">Any day</button>' +
+      keys.map(function(k){ return '<button type="button" class="btn ghost sm" data-day="' + k + '" aria-pressed="' + (DAY === k) + '" title="' + k + '">' + dayLabel(k) + ' <span class="cov">' + Object.keys(fixtures[k]).length + '</span></button>'; }).join('');
+    document.getElementById('dayNote').textContent = DAY ? dayLabel(DAY) + ' (' + DAY + ')' : 'times in Nairobi';
+  }
+  document.getElementById('dayChips').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-day]'); if (!b) return;
+    DAY = b.dataset.day === '*' ? null : b.dataset.day; renderDays(); render();
+  });
+
   renderChips();
+  renderDays();
   render();
 
   // The live board. When the capture pipeline has published data/board.json beside this
@@ -1224,7 +1260,7 @@ footer a{color:var(--ink-2)}
       if (!b || !b.fixtures || !b.fixtures.length || !b.operators || b.operators.length < 2) return;
       LIVE = b; loadBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null;
       settlePick(true);
-      renderChips(); render(); renderAcca(); showLive(b);
+      renderChips(); renderDays(); render(); renderAcca(); showLive(b);
     }).catch(function(){});
   } catch (e) {}
 })();
