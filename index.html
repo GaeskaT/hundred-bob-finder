@@ -514,6 +514,11 @@ footer a{color:var(--ink-2)}
           </div>
         </div>
       </div>
+      <div class="leagues-ctrl" id="bookCtrl">
+        <label class="sans">Operators compared <b class="mono" id="bookNote"></b></label>
+        <div class="chips" id="bookChips" role="group" aria-label="Operators to compare"></div>
+        <p class="finder-note" style="margin:8px 0 0">Turn an operator off to see the board without it: probabilities, best prices and coverage are recomputed from the ones left on. Remembered on this phone only.</p>
+      </div>
       <div class="leagues-ctrl">
         <label class="sans">Leagues <b class="mono" id="rowCount"></b></label>
         <div class="chips" id="leagueChips" role="group" aria-label="Leagues to show"></div>
@@ -953,7 +958,27 @@ footer a{color:var(--ink-2)}
   });
   LEAGUES.sort(function(a, b){ return (b.books - a.books) || (b.fixtures - a.fixtures) || a.league.localeCompare(b.league); });
   }
-  loadBoard(BOARD, BOOKS);
+  // Operator filter. The full board is kept aside; the working board is rebuilt from
+  // the chosen operators, so consensus, best price, coverage and the accumulator's
+  // per-book pricing all recompute on the subset through the same code. At least
+  // one operator stays on; a consensus still needs three, and rows say "thin".
+  var BOARD_FULL = null, BOOKS_FULL = null, activeBooks = null;   // null = every operator
+  try { var sb = JSON.parse(localStorage.getItem('hbf.books') || 'null'); if (Array.isArray(sb) && sb.length) activeBooks = sb; } catch (e) {}
+  function setBoard(board, books){ BOARD_FULL = board; BOOKS_FULL = books; applyBooks(); }
+  function applyBooks(){
+    if (activeBooks){ activeBooks = activeBooks.filter(function(b){ return BOOKS_FULL.indexOf(b) >= 0; }); if (!activeBooks.length) activeBooks = null; }
+    var keep = BOOKS_FULL.map(function(b){ return !activeBooks || activeBooks.indexOf(b) >= 0; });
+    var books = BOOKS_FULL.filter(function(b, i){ return keep[i]; });
+    var board = BOARD_FULL.map(function(g){ return Object.assign({}, g, {odds: g.odds.filter(function(_, i){ return keep[i]; })}); });
+    loadBoard(board, books);
+  }
+  function renderBooks(){
+    var box = document.getElementById('bookChips'); if (!box || !BOOKS_FULL) return;
+    box.innerHTML = '<button type="button" class="btn ghost sm" data-book="*" aria-pressed="' + (!activeBooks) + '">All operators</button>' +
+      BOOKS_FULL.map(function(b){ var on = !activeBooks || activeBooks.indexOf(b) >= 0; return '<button type="button" class="btn ghost sm" data-book="' + b + '" aria-pressed="' + on + '">' + b + '</button>'; }).join('');
+    document.getElementById('bookNote').textContent = (activeBooks ? activeBooks.length : BOOKS_FULL.length) + ' of ' + BOOKS_FULL.length + ' compared' + ((activeBooks ? activeBooks.length : BOOKS_FULL.length) < 3 ? ' · fewer than three cannot carry a consensus' : '');
+  }
+  setBoard(BOARD, BOOKS);
   var picked = null; // null = every league; otherwise a set of league names
   try { var saved = JSON.parse(localStorage.getItem('hbf.leagues') || 'null'); if (Array.isArray(saved) && saved.length) picked = saved; } catch (e) {}
   // "all" is saved explicitly, so a deliberate "All leagues" survives the next visit
@@ -1229,6 +1254,21 @@ footer a{color:var(--ink-2)}
       keys.map(function(k){ return '<button type="button" class="btn ghost sm" data-day="' + k + '" aria-pressed="' + (DAY === k) + '" title="' + k + '">' + dayLabel(k) + ' <span class="cov">' + Object.keys(fixtures[k]).length + '</span></button>'; }).join('');
     document.getElementById('dayNote').textContent = DAY ? dayLabel(DAY) + ' (' + DAY + ')' : 'times in Nairobi';
   }
+  document.getElementById('bookChips').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-book]'); if (!b) return;
+    var name = b.dataset.book;
+    if (name === '*') activeBooks = null;
+    else {
+      var cur = activeBooks ? activeBooks.slice() : BOOKS_FULL.slice();
+      var at = cur.indexOf(name);
+      if (at >= 0){ if (cur.length === 1) return; cur.splice(at, 1); } else cur.push(name);   // one always stays on
+      activeBooks = cur.length === BOOKS_FULL.length ? null : cur;
+    }
+    try { activeBooks ? localStorage.setItem('hbf.books', JSON.stringify(activeBooks)) : localStorage.removeItem('hbf.books'); } catch (e) {}
+    applyBooks(); ACCA.length = 0; selected = null; settlePick(true);
+    renderBooks(); renderChips(); renderDays(); render(); renderAcca();
+  });
+  renderBooks();
   document.getElementById('dayChips').addEventListener('click', function(e){
     var b = e.target.closest('button[data-day]'); if (!b) return;
     DAY = b.dataset.day === '*' ? null : b.dataset.day; renderDays(); render();
@@ -1258,7 +1298,7 @@ footer a{color:var(--ink-2)}
   try {
     fetch('data/board.json', {cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(b){
       if (!b || !b.fixtures || !b.fixtures.length || !b.operators || b.operators.length < 2) return;
-      LIVE = b; loadBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null;
+      LIVE = b; setBoard(b.fixtures, b.operators); ACCA.length = 0; selected = null; renderBooks();
       settlePick(true);
       renderChips(); renderDays(); render(); renderAcca(); showLive(b);
     }).catch(function(){});
