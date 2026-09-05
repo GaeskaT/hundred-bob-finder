@@ -25,7 +25,9 @@ and a deep link that opens the operator's app (or site) at that fixture.
     fixture page (an Android intent naming its app, with the site as fallback), one link per leg
     for an accumulator, Copy slip, and Copy links (every operator's page for the fixture, plain
     https, ready to share).
-  - Floor multi: pick a minimum probability (45%, 60%, 70%...) and every outcome at or above it,
+  - 75% floor, always: the finder only shows outcomes whose consensus chance of winning is 75% or
+    more. The probability slider starts at 75% and can only be raised.
+  - Floor multi: raise the minimum probability (75%, 80%, 85%...) and every outcome at or above it,
     one per fixture, is highlighted and combined into one multi-bet per operator with combined
     odds, what it pays to M-Pesa if every leg wins, and the chance of that; capped at the 20
     likeliest legs. Take it to the operator, load it into the builder, or Share it (phone share

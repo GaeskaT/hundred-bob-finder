@@ -505,8 +505,8 @@ footer a{color:var(--ink-2)}
           <input type="range" id="dep" min="50" max="5000" step="50" value="200">
         </div>
         <div class="ctrl">
-          <label for="minp">Minimum probability <b id="minpOut">0%</b></label>
-          <input type="range" id="minp" min="0" max="90" step="5" value="0">
+          <label for="minp">Minimum probability <b id="minpOut">75%</b> <span class="finder-note" style="margin:0;display:inline">(75% is the floor; only outcomes at or above it are ever shown)</span></label>
+          <input type="range" id="minp" min="75" max="95" step="5" value="75">
         </div>
         <div class="ctrl">
           <label for="fxq">Find a fixture <b id="fxqOut"></b></label>
@@ -881,7 +881,7 @@ footer a{color:var(--ink-2)}
     </div>
 
     <h3>§ 10.3 — The floor multi: every outcome at or above a minimum probability, as one slip</h3>
-    <p>Pick a minimum probability. Every outcome on the board at or above it (one per fixture, the likeliest, within the league, day, market and search filters of § 5) is highlighted in the finder and combined into one multi-bet per operator, with the combined odds and what it pays if every leg wins. The slider in § 5 is the same floor.</p>
+    <p>The finder only ever shows outcomes with a consensus chance of 75% or more. Raise the floor here or in § 5, and every outcome at or above it (one per fixture, the likeliest, within the league, day, market and search filters) is highlighted in the finder and combined into one multi-bet per operator, with the combined odds and what it pays if every leg wins.</p>
     <div class="panel" id="floorPanel">
       <div class="floor-chips" id="floorChips" role="group" aria-label="Minimum probability"></div>
       <div class="acca-grid">
@@ -962,6 +962,7 @@ footer a{color:var(--ink-2)}
     {fx:"Los Angeles Lakers v Boston Celtics · Mon 03:30", sport:"Basketball", league:"NBA", mk:"Moneyline", out:["Home win","Away win"], odds:[[1.65,2.25],[1.62,2.30],null,[1.60,2.35]]}
   ];
   var EXC = 0.95; // deposit and withdrawal excise each leave 95%
+  var HARD_FLOOR = 0.75; // only outcomes with a consensus chance of 75% or more are ever shown
   function median(a){ a = a.slice().sort(function(x,y){return x-y}); var m = a.length>>1; return a.length%2 ? a[m] : (a[m-1]+a[m])/2; }
   // Build rows: consensus p per outcome from basic de-vig at each book.
   var ROWS = [], LEAGUES = [], LIVE = null;
@@ -1060,7 +1061,7 @@ footer a{color:var(--ink-2)}
     savePicked(); renderChips(); render();
   });
   var dep = document.getElementById('dep'), minp = document.getElementById('minp');
-  try { var qf = new URLSearchParams(location.search).get('floor'); if (qf !== null && !isNaN(+qf) && +qf >= 0 && +qf <= 90) minp.value = Math.round(+qf / 5) * 5; } catch (e) {}
+  try { var qf = new URLSearchParams(location.search).get('floor'); if (qf !== null && !isNaN(+qf) && +qf >= 75 && +qf <= 95) minp.value = Math.round(+qf / 5) * 5; } catch (e) {}
   var depOut = document.getElementById('depOut'), minpOut = document.getElementById('minpOut');
   var tbody = document.getElementById('rows'); var sortKey = 'p'; var selected = null;
   function fmt(x){ return x.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
@@ -1070,7 +1071,7 @@ footer a{color:var(--ink-2)}
     return {S:S, gross:gross, cash:cash, profit:cash-D, ev:100*(EXC*EXC*r.p*r.best-1), be:1/(EXC*EXC*r.best), fair:1/r.p, edge:r.best*r.p*EXC*EXC-1};
   }
   function render(){
-    var D = +dep.value, floor = +minp.value/100;
+    var D = +dep.value, floor = Math.max(HARD_FLOOR, +minp.value/100);
     depOut.textContent = 'KES ' + D.toLocaleString(); minpOut.textContent = pct(floor);
     // Fixture search: every word typed must appear somewhere in the fixture, the
     // outcome or the league, so "arsenal chelsea" finds the match and "over bayern"
@@ -1086,7 +1087,7 @@ footer a{color:var(--ink-2)}
     }).map(function(r){ r.c = calc(r, D); return r; });
     var FM = floorMulti(rows); var inMulti = {}; if (FM && FM.best){ FM.best.legs.forEach(function(i){ inMulti[i] = true; }); }
     document.getElementById('fxqOut').textContent = q.length ? rows.length + ' match' + (rows.length === 1 ? '' : 'es') : '';
-    document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
+    document.getElementById('rowCount').textContent = rows.length + ' of ' + ROWS.length + ' outcomes at ' + pct(floor) + '+ · ' + (picked ? picked.length + ' league' + (picked.length > 1 ? 's' : '') : 'all leagues');
     rows.sort(function(a,b){ return sortKey==='p' ? b.p-a.p : sortKey==='cash' ? b.c.cash-a.c.cash : b.c.ev-a.c.ev; });
     renderPick(rows, D);
     tbody.innerHTML = rows.map(function(r, i){
@@ -1269,9 +1270,9 @@ footer a{color:var(--ink-2)}
   // first, up to MULTI_MAX legs. Combined price is the product; probability is the
   // product of the consensus probabilities, which assumes independent fixtures.
   var MULTI_MAX = 20;
-  var FLOOR_PRESETS = [45, 50, 60, 70, 80, 90];
+  var FLOOR_PRESETS = [75, 80, 85, 90, 95];
   function floorMulti(rows){
-    var floor = +minp.value / 100; if (!(floor > 0)) return null;
+    var floor = Math.max(HARD_FLOOR, +minp.value / 100);
     var byFx = {}; rows.forEach(function(r){ var k = r.fx; if (!byFx[k] || r.p > byFx[k].p) byFx[k] = r; });
     var legs = Object.keys(byFx).map(function(k){ return byFx[k]; }).sort(function(a, b){ return b.p - a.p; });
     if (!legs.length) return {floor: floor, legs: [], per: [], best: null};
@@ -1291,7 +1292,7 @@ footer a{color:var(--ink-2)}
   }
   var floorBooks = document.getElementById('floorBooks'), floorKv = document.getElementById('floorKv'), floorNote = document.getElementById('floorNote'), floorPlace = document.getElementById('floorPlace'), floorLoad = document.getElementById('floorLoad'), floorShare = document.getElementById('floorShare'), floorReceipt = document.getElementById('floorReceipt'), floorChips = document.getElementById('floorChips');
   var FLOOR_BET = null;
-  floorChips.innerHTML = '<button type="button" data-floor="0">Off</button>' + FLOOR_PRESETS.map(function(v){ return '<button type="button" data-floor="' + v + '">' + v + '%+</button>'; }).join('');
+  floorChips.innerHTML = FLOOR_PRESETS.map(function(v){ return '<button type="button" data-floor="' + v + '">' + v + '%+</button>'; }).join('');
   floorChips.addEventListener('click', function(e){ var b = e.target.closest('button[data-floor]'); if (!b) return; minp.value = b.dataset.floor; render(); });
   function renderFloor(FM, D){
     var v = +minp.value; floorChips.querySelectorAll('button').forEach(function(b){ b.setAttribute('aria-pressed', +b.dataset.floor === v ? 'true' : 'false'); });
